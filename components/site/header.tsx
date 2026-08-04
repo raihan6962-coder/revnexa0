@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Menu, X, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -44,13 +45,15 @@ export function Header() {
       )}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-heading font-bold text-lg">
-            R
-          </span>
-          <span className="font-heading text-xl font-bold tracking-tight text-foreground">
-            Revnexa
-          </span>
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/logo.svg"
+            alt="Revnexa"
+            width={140}
+            height={30}
+            className="h-7 w-auto sm:h-8 md:h-9"
+            priority
+          />
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">

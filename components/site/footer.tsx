@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Mail, MessageCircle, Send, Clock, Lock } from 'lucide-react';
 import { getSiteSettings } from '@/lib/data';
 import type { SiteSettings } from '@/lib/types';
@@ -41,9 +42,14 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid gap-12 md:grid-cols-4">
           <div className="md:col-span-2">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-heading font-bold text-lg">R</span>
-              <span className="font-heading text-xl font-bold tracking-tight">Revnexa</span>
+            <Link href="/" className="flex items-center">
+              <Image
+                src="/logo.svg"
+                alt="Revnexa"
+                width={140}
+                height={30}
+                className="h-7 w-auto"
+              />
             </Link>
             <p className="mt-4 max-w-sm text-sm text-secondary-foreground/70">
               Professional Google Play Store review service helping apps grow through authentic user engagement and rating improvement support.
