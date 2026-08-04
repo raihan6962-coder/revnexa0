@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
+import { getServerDb } from '@/lib/server-db';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,7 +12,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Name and email are required' }, { status: 400 });
     }
 
-    const db = await getDb();
+    const db = getServerDb();
     const id = crypto.randomUUID();
 
     await db.query(
@@ -28,7 +30,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    const db = await getDb();
+    const db = getServerDb();
     const result = await db.query(
       `SELECT * FROM conversations ORDER BY last_message_at DESC`
     );

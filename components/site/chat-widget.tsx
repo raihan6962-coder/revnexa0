@@ -1,33 +1,29 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
-import { MessageCircle, X, Send, Mail, Clock, ArrowLeft } from 'lucide-react';
+import { MessageCircle, X, Send, Clock, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { getSiteSettings, sendTelegramNotification } from '@/lib/data';
-import type { SiteSettings, Message } from '@/lib/types';
+import type { Message } from '@/lib/types';
 
 export function ChatWidget() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [settings, setSettings] = useState<SiteSettings>({});
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [appName, setAppName] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [sendingMessage, setSendingMessage] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const pollRef = useRef<NodeJS.Timeout | null>(null);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  useEffect(() => {
-    if (pathname?.startsWith('/admin')) return;
-    getSiteSettings().then(setSettings);
-  }, [pathname]);
+  const replyTime = 'We typically reply within 3-5 minutes';
 
   useEffect(() => {
     return () => {
@@ -39,65 +35,78 @@ export function ChatWidget() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const startPolling = (convId: string) => {
+  const fetchMessages = useCallback(async (convId: string) => {
+    try {
+      const res = await fetch(`/api/messages?conversation_id=${convId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setMessages(data);
+      }
+    } catch {}
+  }, []);
+
+  const startPolling = useCallback((convId: string) => {
     if (pollRef.current) clearInterval(pollRef.current);
-    pollRef.current = setInterval(async () => {
-      try {
-        const res = await fetch(`/api/messages?conversation_id=${convId}`);
-        if (res.ok) {
-          const data = await res.json();
-          setMessages(data);
-        }
-      } catch {}
-    }, 3000);
-  };
+    fetchMessages(convId);
+    pollRef.current = setInterval(() => fetchMessages(convId), 3000);
+  }, [fetchMessages]);
 
   if (pathname?.startsWith('/admin')) return null;
 
-  const replyTime = settings.reply_time_text || 'We typically reply within 3-5 minutes';
-
   const handleStartChat = async () => {
-    if (!fullName || !email) return;
+    if (!fullName.trim() || !email.trim()) return;
     setSubmitting(true);
+    setError('');
 
     try {
       const res = await fetch('/api/conversations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ client_name: fullName, client_email: email, app_name: appName || null }),
+        body: JSON.stringify({ client_name: fullName.trim(), client_email: email.trim(), app_name: appName.trim() || null }),
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        setConversationId(data.id);
+      if (!res.ok) {
+        const err = await res.json();
+        setError(err.error || 'Failed to start chat');
+        setSubmitting(false);
+        return;
+      }
 
-        const initialMessage = `Hi Revnexa team, I'm ${fullName} and I found your website. I'd like to learn more about your Google Play Store review service${appName ? ` for my app ${appName}` : ''}. Could you share more details?`;
+      const data = await res.json();
+      const convId = data.id;
 
-        await fetch('/api/messages', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ conversation_id: data.id, sender: 'client', content: initialMessage }),
-        });
+      const initialMessage = `Hi Revnexa team, I'm ${fullName.trim()} and I found your website. I'd like to learn more about your Google Play Store review service${appName ? ` for my app ${appName}` : ''}. Could you share more details?`;
 
-        sendTelegramNotification({
-          full_name: fullName,
-          email,
-          app_name: appName || null,
+      await fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversation_id: convId, sender: 'client', content: initialMessage }),
+      });
+
+      fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          full_name: fullName.trim(),
+          email: email.trim(),
+          app_name: appName.trim() || null,
           message: initialMessage,
           channel: 'chat',
-        }).catch(() => {});
+        }),
+      }).catch(() => {});
 
-        setMessages([{
-          id: 'temp',
-          conversation_id: data.id,
-          sender: 'client',
-          content: initialMessage,
-          created_at: new Date().toISOString(),
-        }]);
-
-        startPolling(data.id);
-      }
-    } catch {}
+      setConversationId(convId);
+      setMessages([{
+        id: 'temp-1',
+        conversation_id: convId,
+        sender: 'client',
+        content: initialMessage,
+        created_at: new Date().toISOString(),
+      }]);
+      startPolling(convId);
+    } catch (err) {
+      setError('Something went wrong. Please try again.');
+    }
 
     setSubmitting(false);
   };
@@ -135,12 +144,21 @@ export function ChatWidget() {
     if (pollRef.current) clearInterval(pollRef.current);
     setConversationId(null);
     setMessages([]);
+    setError('');
+  };
+
+  const handleClose = () => {
+    if (pollRef.current) clearInterval(pollRef.current);
+    setOpen(false);
+    setConversationId(null);
+    setMessages([]);
     setFullName('');
     setEmail('');
     setAppName('');
+    setError('');
   };
 
-  const formValid = fullName.trim() && email.trim();
+  const formValid = fullName.trim().length > 0 && email.trim().length > 0;
 
   return (
     <>
@@ -161,6 +179,7 @@ export function ChatWidget() {
       {open && (
         <div className="fixed bottom-6 right-6 z-50 w-[calc(100vw-3rem)] max-w-sm animate-scale-in">
           <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-premium-lg">
+            {/* Header */}
             <div className="flex items-center justify-between bg-navy-gradient px-5 py-4 text-secondary-foreground">
               <div className="flex items-center gap-3">
                 {conversationId && (
@@ -175,16 +194,22 @@ export function ChatWidget() {
                   </div>
                 </div>
               </div>
-              <button onClick={() => setOpen(false)} className="rounded-md p-1.5 text-secondary-foreground/70 transition-colors hover:bg-white/10 hover:text-secondary-foreground" aria-label="Close chat">
+              <button onClick={handleClose} className="rounded-md p-1.5 text-secondary-foreground/70 transition-colors hover:bg-white/10 hover:text-secondary-foreground" aria-label="Close chat">
                 <X className="h-5 w-5" />
               </button>
             </div>
 
+            {/* Form */}
             {!conversationId ? (
               <div className="space-y-4 px-5 py-5">
                 <div className="rounded-lg bg-muted p-3 text-sm text-muted-foreground">
                   Hi! Tell us about your app and we&apos;ll get back to you right away.
                 </div>
+                {error && (
+                  <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+                    {error}
+                  </div>
+                )}
                 <div className="space-y-3">
                   <div>
                     <Label htmlFor="chat-name" className="text-xs">Full Name <span className="text-destructive">*</span></Label>
@@ -208,6 +233,7 @@ export function ChatWidget() {
                 </Button>
               </div>
             ) : (
+              /* Chat Interface */
               <div className="flex flex-col h-[400px]">
                 <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
                   {messages.map((msg) => (

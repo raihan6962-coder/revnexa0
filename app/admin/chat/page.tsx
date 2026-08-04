@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { MessageCircle, Send, ArrowLeft, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,7 +13,7 @@ export default function AdminChatPage() {
   const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const pollRef = useRef<NodeJS.Timeout | null>(null);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     loadConversations();
@@ -53,10 +53,11 @@ export default function AdminChatPage() {
     } catch {}
   }
 
-  const startPolling = (conversationId: string) => {
+  const startPolling = useCallback((conversationId: string) => {
     if (pollRef.current) clearInterval(pollRef.current);
+    loadMessages(conversationId);
     pollRef.current = setInterval(() => loadMessages(conversationId), 3000);
-  };
+  }, []);
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !selected) return;
@@ -105,7 +106,7 @@ export default function AdminChatPage() {
           {conversations.length === 0 ? (
             <div className="rounded-xl border border-border bg-card p-12 text-center">
               <MessageCircle className="mx-auto h-10 w-10 text-muted-foreground/50" />
-              <p className="mt-4 text-sm text-muted-foreground">No conversations yet.</p>
+              <p className="mt-4 text-sm text-muted-foreground">No conversations yet. Waiting for clients to start a chat...</p>
             </div>
           ) : (
             conversations.map((conv) => (
@@ -160,6 +161,9 @@ export default function AdminChatPage() {
 
           <div className="flex flex-col h-[500px]">
             <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+              {messages.length === 0 && (
+                <p className="text-center text-sm text-muted-foreground py-8">No messages yet</p>
+              )}
               {messages.map((msg) => (
                 <div
                   key={msg.id}

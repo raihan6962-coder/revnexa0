@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
+import { getServerDb } from '@/lib/server-db';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,7 +12,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'conversation_id, sender, and content are required' }, { status: 400 });
     }
 
-    const db = await getDb();
+    const db = getServerDb();
     const id = crypto.randomUUID();
 
     await db.query(
@@ -40,7 +42,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'conversation_id is required' }, { status: 400 });
     }
 
-    const db = await getDb();
+    const db = getServerDb();
     const result = await db.query(
       `SELECT * FROM messages WHERE conversation_id = $1 ORDER BY created_at ASC`,
       [conversationId]
