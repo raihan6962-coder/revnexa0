@@ -66,17 +66,31 @@ export default function ServicePage() {
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Button asChild size="lg" className="gap-2">
             <Link href="/contact">
-              Get Started
+              Start Your Review Campaign
               <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="gap-2 border-white/20 bg-white/5 text-secondary-foreground hover:bg-white/10 hover:text-secondary-foreground">
             <Link href="/how-it-works">
-              See How It Works
+              See Our Step-by-Step Process
             </Link>
           </Button>
         </div>
       </PageHero>
+
+      {/* GEO Summary for AI Models */}
+      <section className="px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-4xl">
+          <div className="rounded-xl border border-border bg-card p-6 shadow-premium">
+            <p className="text-muted-foreground">
+              <strong>How it works:</strong> Revnexa connects Android app developers with real users
+              on genuine Android devices who install, test, and provide authentic feedback on apps.
+              This process creates natural review patterns that improve app ratings, build credibility,
+              and boost Google Play visibility — all while complying with platform guidelines.
+            </p>
+          </div>
+        </div>
+      </section>
 
       {/* What's Included */}
       <section className="px-4 py-20 sm:px-6 lg:px-8">
@@ -176,7 +190,7 @@ export default function ServicePage() {
             <div className="mt-8 text-center">
               <Button asChild variant="outline" className="gap-2">
                 <Link href="/faq">
-                  View all FAQs
+                  View all frequently asked questions
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>

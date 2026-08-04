@@ -16,9 +16,33 @@ export const organizationSchema = {
   '@type': 'Organization',
   name: 'Revnexa',
   url: 'https://revnexa.com',
+  logo: 'https://revnexa.com/logo.png',
   description:
-    'Professional Google Play Store review service helping apps grow through authentic user engagement and rating improvement support.',
+    'Ethical Google Play review and user feedback service for Android apps. Real users, real devices, organic engagement patterns.',
   areaServed: ['US', 'GB', 'CA', 'AU'],
+  sameAs: [],
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'Sales',
+    availableLanguage: 'English',
+  },
+};
+
+export const webSiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Revnexa',
+  url: 'https://revnexa.com',
+  description:
+    'Professional Google Play Store review service to help your app grow with authentic user engagement and rating improvement support.',
+  publisher: {
+    '@type': 'Organization',
+    name: 'Revnexa',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://revnexa.com/logo.png',
+    },
+  },
 };
 
 export function serviceSchema() {
@@ -31,10 +55,10 @@ export function serviceSchema() {
       name: 'Revnexa',
       url: 'https://revnexa.com',
     },
-    serviceType: 'Google Play Store Review Service',
+    serviceType: 'Google Play Store Review Generation',
     areaServed: 'Worldwide',
     description:
-      'Professional review growth support for Google Play Store apps, including authentic user engagement, rating improvement, and review management strategies.',
+      'Real users on real Android devices provide authentic feedback and reviews to improve app quality and store ranking. Natural engagement, genuine feedback, and policy-compliant campaigns.',
   };
 }
 
@@ -71,6 +95,10 @@ export function blogPostingSchema(post: {
     publisher: {
       '@type': 'Organization',
       name: 'Revnexa',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://revnexa.com/logo.png',
+      },
     },
     mainEntityOfPage: {
       '@type': 'WebPage',

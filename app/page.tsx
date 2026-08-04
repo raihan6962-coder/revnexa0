@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { TrustBar } from '@/components/site/trust-bar';
 import { SectionHeading } from '@/components/site/section-heading';
 import { CtaBand } from '@/components/site/cta-band';
-import { JsonLd, organizationSchema } from '@/components/site/json-ld';
+import { JsonLd, organizationSchema, webSiteSchema } from '@/components/site/json-ld';
 import { getPublishedFaqs, getPublishedTestimonials, getRecentBlogPosts } from '@/lib/data';
 import type { Faq, Testimonial, BlogPost } from '@/lib/types';
 
@@ -34,6 +34,7 @@ export default function HomePage() {
   return (
     <>
       <JsonLd data={organizationSchema} />
+      <JsonLd data={webSiteSchema} />
 
       {/* Hero */}
       <section className="relative overflow-hidden bg-hero-radial px-4 pb-20 pt-32 sm:px-6 sm:pt-40 lg:px-8">
@@ -43,24 +44,24 @@ export default function HomePage() {
             Google Play Store Review Service
           </span>
           <h1 className="mt-6 font-heading text-4xl font-bold tracking-tight text-secondary-foreground sm:text-6xl">
-            Grow your app&apos;s rating with{' '}
-            <span className="text-primary">authentic user engagement</span>
+            Real Google Play Reviews from Authentic Android Users
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-secondary-foreground/70">
-            Professional review growth support for Google Play Store apps.
-            We help you build credibility, improve visibility, and drive more
-            downloads through genuine feedback.
+            Collect authentic user feedback from real Android users. Our platform
+            connects you with genuine testers who provide actionable insights to
+            boost your app&apos;s quality and Google Play visibility — ethically
+            and transparently.
           </p>
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Button asChild size="lg" className="gap-2">
               <Link href="/contact">
-                Get Started
+                Start Your Review Campaign
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="gap-2 border-white/20 bg-white/5 text-secondary-foreground hover:bg-white/10 hover:text-secondary-foreground">
               <Link href="/play-store-review-service">
-                Learn About Our Service
+                Explore Our Ethical App Review Service
               </Link>
             </Button>
           </div>
@@ -103,7 +104,7 @@ export default function HomePage() {
           <div className="mt-10 text-center">
             <Button asChild variant="outline" className="gap-2">
               <Link href="/play-store-review-service">
-                Learn more about the service
+                Learn more about our Google Play review service
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
@@ -138,7 +139,7 @@ export default function HomePage() {
           <div className="mt-10 text-center">
             <Button asChild variant="outline" className="gap-2">
               <Link href="/how-it-works">
-                See the full process
+                See our step-by-step review process
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
@@ -181,7 +182,7 @@ export default function HomePage() {
             <div className="mt-10 text-center">
               <Button asChild variant="outline" className="gap-2">
                 <Link href="/reviews">
-                  Read more reviews
+                  Read authentic client reviews
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
@@ -215,7 +216,7 @@ export default function HomePage() {
             <div className="mt-8 text-center">
               <Button asChild variant="outline" className="gap-2">
                 <Link href="/faq">
-                  View all FAQs
+                  View all frequently asked questions
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
@@ -267,7 +268,7 @@ export default function HomePage() {
             <div className="mt-10 text-center">
               <Button asChild variant="outline" className="gap-2">
                 <Link href="/blog">
-                  Read the blog
+                  Read our app review insights blog
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>

@@ -13,6 +13,7 @@ const navLinks = [
   { href: '/play-store-review-service', label: 'Service' },
   { href: '/how-it-works', label: 'How It Works' },
   { href: '/why-choose-us', label: 'Why Us' },
+  { href: '/about', label: 'About' },
   { href: '/reviews', label: 'Reviews' },
   { href: '/faq', label: 'FAQ' },
   { href: '/blog', label: 'Blog' },

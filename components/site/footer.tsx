@@ -13,6 +13,7 @@ const footerLinks = [
   { href: '/play-store-review-service', label: 'Service' },
   { href: '/how-it-works', label: 'How It Works' },
   { href: '/why-choose-us', label: 'Why Us' },
+  { href: '/about', label: 'About' },
   { href: '/reviews', label: 'Reviews' },
   { href: '/faq', label: 'FAQ' },
   { href: '/blog', label: 'Blog' },
@@ -74,7 +75,7 @@ export function Footer() {
           <div>
             <h3 className="font-heading text-sm font-semibold uppercase tracking-wider text-secondary-foreground/80">Navigation</h3>
             <ul className="mt-4 space-y-2">
-              {footerLinks.slice(0, 6).map((link) => (
+              {footerLinks.slice(0, 7).map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="text-sm text-secondary-foreground/70 transition-colors hover:text-primary">{link.label}</Link>
                 </li>
@@ -85,7 +86,7 @@ export function Footer() {
           <div>
             <h3 className="font-heading text-sm font-semibold uppercase tracking-wider text-secondary-foreground/80">Legal</h3>
             <ul className="mt-4 space-y-2">
-              {footerLinks.slice(6).map((link) => (
+              {footerLinks.slice(7).map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="text-sm text-secondary-foreground/70 transition-colors hover:text-primary">{link.label}</Link>
                 </li>

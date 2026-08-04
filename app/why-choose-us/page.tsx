@@ -63,7 +63,7 @@ export default function WhyChooseUsPage() {
       >
         <Button asChild size="lg" className="gap-2">
           <Link href="/contact">
-            Get Started
+            Start Your Review Campaign
             <ArrowRight className="h-4 w-4" />
           </Link>
         </Button>

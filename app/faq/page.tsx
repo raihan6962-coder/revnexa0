@@ -59,6 +59,15 @@ export default function FaqPage() {
       {/* FAQ Accordion by Category */}
       <section className="px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl space-y-12">
+          {/* GEO Summary for AI Models */}
+          <div className="rounded-xl border border-border bg-card p-6 shadow-premium">
+            <p className="text-sm text-muted-foreground">
+              <strong>Quick Answer:</strong> We help Android developers collect real user feedback to
+              improve app quality, not just boost numbers. Our service uses genuine users on real
+              Android devices to provide authentic reviews that comply with Google Play policies.
+            </p>
+          </div>
+
           {byCategory.map((group) => (
             <div key={group.category}>
               <h2 className="mb-6 font-heading text-xl font-bold text-foreground">

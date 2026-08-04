@@ -13,11 +13,11 @@ const sora = Sora({ subsets: ['latin'], variable: '--font-sora', display: 'swap'
 export const metadata: Metadata = {
   metadataBase: new URL('https://revnexa.com'),
   title: {
-    default: 'Revnexa — Google Play Store Review Service',
+    default: 'Google Play Reviews Service | Real User Feedback for Android Apps',
     template: '%s | Revnexa',
   },
   description:
-    'Professional Google Play Store review service to help your app grow with authentic user engagement and rating improvement support.',
+    'Get authentic Google Play reviews from real Android users. Improve your app rating, gain valuable feedback, and boost conversions. Start your campaign today.',
   icons: {
     icon: [
       { url: '/favicon.png', sizes: '32x32', type: 'image/png' },
@@ -37,28 +37,31 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: 'https://revnexa.com',
     siteName: 'Revnexa',
-    title: 'Revnexa — Google Play Store Review Service',
+    title: 'Google Play Reviews Service | Real User Feedback for Android Apps',
     description:
-      'Professional Google Play Store review service to help your app grow with authentic user engagement and rating improvement support.',
+      'Get authentic Google Play reviews from real Android users. Improve your app rating, gain valuable feedback, and boost conversions.',
     images: [
       {
         url: '/logo.png',
         width: 1200,
         height: 630,
-        alt: 'Revnexa',
+        alt: 'Revnexa - Google Play Review Service',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Revnexa — Google Play Store Review Service',
+    title: 'Google Play Reviews Service | Real User Feedback for Android Apps',
     description:
-      'Professional Google Play Store review service to help your app grow with authentic user engagement and rating improvement support.',
+      'Get authentic Google Play reviews from real Android users. Improve your app rating, gain valuable feedback.',
     images: ['/logo.png'],
   },
   robots: {
     index: true,
     follow: true,
+  },
+  alternates: {
+    canonical: 'https://revnexa.com',
   },
 };
 
