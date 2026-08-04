@@ -13,6 +13,28 @@ CREATE TABLE IF NOT EXISTS inquiries (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+CREATE TABLE IF NOT EXISTS conversations (
+  id TEXT PRIMARY KEY,
+  client_name TEXT NOT NULL,
+  client_email TEXT NOT NULL,
+  app_name TEXT,
+  status TEXT NOT NULL DEFAULT 'active',
+  last_message_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS messages (
+  id TEXT PRIMARY KEY,
+  conversation_id TEXT NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+  sender TEXT NOT NULL CHECK (sender IN ('client', 'admin')),
+  content TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_messages_conversation_id ON messages(conversation_id);
+CREATE INDEX IF NOT EXISTS idx_messages_created_at ON messages(created_at);
+CREATE INDEX IF NOT EXISTS idx_conversations_last_message_at ON conversations(last_message_at);
+
 CREATE TABLE IF NOT EXISTS blog_posts (
   id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   slug TEXT UNIQUE NOT NULL,

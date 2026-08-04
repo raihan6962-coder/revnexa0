@@ -2,6 +2,8 @@ export type InquiryStatus = 'new' | 'contacted' | 'in_progress' | 'converted' | 
 export type InquiryChannel = 'whatsapp' | 'telegram' | 'email';
 export type BlogPostStatus = 'draft' | 'published';
 export type FaqCategory = 'General' | 'Process' | 'Safety' | 'Support';
+export type ConversationStatus = 'active' | 'closed' | 'archived';
+export type MessageSender = 'client' | 'admin';
 
 export interface Inquiry {
   id: string;
@@ -12,6 +14,24 @@ export interface Inquiry {
   channel: InquiryChannel;
   status: InquiryStatus;
   country: string | null;
+  created_at: string;
+}
+
+export interface Conversation {
+  id: string;
+  client_name: string;
+  client_email: string;
+  app_name: string | null;
+  status: ConversationStatus;
+  last_message_at: string;
+  created_at: string;
+}
+
+export interface Message {
+  id: string;
+  conversation_id: string;
+  sender: MessageSender;
+  content: string;
   created_at: string;
 }
 

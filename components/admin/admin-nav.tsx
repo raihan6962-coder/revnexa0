@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Inbox, FileText, HelpCircle, Star, Settings, LogOut, ExternalLink } from 'lucide-react';
+import { LayoutDashboard, Inbox, FileText, HelpCircle, Star, Settings, LogOut, ExternalLink, MessageCircle } from 'lucide-react';
 import { useDb } from '@/lib/db-context';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
 const navItems = [
   { href: '/admin', label: 'Overview', icon: LayoutDashboard },
+  { href: '/admin/chat', label: 'Chat', icon: MessageCircle },
   { href: '/admin/inquiries', label: 'Inquiries', icon: Inbox },
   { href: '/admin/blog', label: 'Blog', icon: FileText },
   { href: '/admin/faqs', label: 'FAQs', icon: HelpCircle },

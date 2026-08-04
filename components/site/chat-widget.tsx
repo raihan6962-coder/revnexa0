@@ -1,15 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { usePathname } from 'next/navigation';
-import { MessageCircle, X, Send, Mail, Clock } from 'lucide-react';
+import { MessageCircle, X, Send, Mail, Clock, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { getSiteSettings, insertInquiry, sendTelegramNotification } from '@/lib/data';
-import type { SiteSettings } from '@/lib/types';
-
-type Channel = 'whatsapp' | 'telegram' | 'email';
+import { getSiteSettings, sendTelegramNotification } from '@/lib/data';
+import type { SiteSettings, Message } from '@/lib/types';
 
 export function ChatWidget() {
   const pathname = usePathname();
@@ -19,49 +17,127 @@ export function ChatWidget() {
   const [email, setEmail] = useState('');
   const [appName, setAppName] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [sendingMessage, setSendingMessage] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const pollRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (pathname?.startsWith('/admin')) return;
     getSiteSettings().then(setSettings);
   }, [pathname]);
 
+  useEffect(() => {
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const startPolling = (convId: string) => {
+    if (pollRef.current) clearInterval(pollRef.current);
+    pollRef.current = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/messages?conversation_id=${convId}`);
+        if (res.ok) {
+          const data = await res.json();
+          setMessages(data);
+        }
+      } catch {}
+    }, 3000);
+  };
+
   if (pathname?.startsWith('/admin')) return null;
 
   const replyTime = settings.reply_time_text || 'We typically reply within 3-5 minutes';
 
-  const buildMessage = () => {
-    const appPart = appName ? ` for my app ${appName}` : '';
-    return `Hi Revnexa team, I'm ${fullName} and I found your website. I'd like to learn more about your Google Play Store review service${appPart}. Could you share more details?`;
-  };
-
-  const handleSubmit = async (channel: Channel) => {
+  const handleStartChat = async () => {
     if (!fullName || !email) return;
-    const message = buildMessage();
     setSubmitting(true);
 
-    insertInquiry({ full_name: fullName, email, app_name: appName || null, message, channel }).catch(() => {});
-    sendTelegramNotification({ full_name: fullName, email, app_name: appName || null, message, channel }).catch(() => {});
+    try {
+      const res = await fetch('/api/conversations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ client_name: fullName, client_email: email, app_name: appName || null }),
+      });
 
-    if (channel === 'whatsapp' && settings.whatsapp_number) {
-      window.open(`https://wa.me/${settings.whatsapp_number}?text=${encodeURIComponent(message)}`, '_blank');
-    } else if (channel === 'telegram' && settings.telegram_username) {
-      window.open(`https://t.me/${settings.telegram_username}?text=${encodeURIComponent(message)}`, '_blank');
-    } else if (channel === 'email') {
-      const contactEmail = settings.contact_email || 'hello@revnexa.com';
-      const subject = 'Inquiry about Google Play Store Review Service';
-      window.location.href = `mailto:${contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
-    }
+      if (res.ok) {
+        const data = await res.json();
+        setConversationId(data.id);
+
+        const initialMessage = `Hi Revnexa team, I'm ${fullName} and I found your website. I'd like to learn more about your Google Play Store review service${appName ? ` for my app ${appName}` : ''}. Could you share more details?`;
+
+        await fetch('/api/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ conversation_id: data.id, sender: 'client', content: initialMessage }),
+        });
+
+        sendTelegramNotification({
+          full_name: fullName,
+          email,
+          app_name: appName || null,
+          message: initialMessage,
+          channel: 'chat',
+        }).catch(() => {});
+
+        setMessages([{
+          id: 'temp',
+          conversation_id: data.id,
+          sender: 'client',
+          content: initialMessage,
+          created_at: new Date().toISOString(),
+        }]);
+
+        startPolling(data.id);
+      }
+    } catch {}
 
     setSubmitting(false);
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setOpen(false);
-      setFullName('');
-      setEmail('');
-      setAppName('');
-    }, 2500);
+  };
+
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || !conversationId) return;
+    setSendingMessage(true);
+
+    const msgContent = newMessage;
+    setNewMessage('');
+
+    try {
+      const res = await fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversation_id: conversationId, sender: 'client', content: msgContent }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setMessages((prev) => [...prev, {
+          id: data.id,
+          conversation_id: conversationId,
+          sender: 'client',
+          content: msgContent,
+          created_at: new Date().toISOString(),
+        }]);
+      }
+    } catch {}
+
+    setSendingMessage(false);
+  };
+
+  const handleBackToForm = () => {
+    if (pollRef.current) clearInterval(pollRef.current);
+    setConversationId(null);
+    setMessages([]);
+    setFullName('');
+    setEmail('');
+    setAppName('');
   };
 
   const formValid = fullName.trim() && email.trim();
@@ -87,7 +163,11 @@ export function ChatWidget() {
           <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-premium-lg">
             <div className="flex items-center justify-between bg-navy-gradient px-5 py-4 text-secondary-foreground">
               <div className="flex items-center gap-3">
-                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-heading font-bold">R</span>
+                {conversationId && (
+                  <button onClick={handleBackToForm} className="rounded-md p-1 text-secondary-foreground/70 hover:text-secondary-foreground" aria-label="Back">
+                    <ArrowLeft className="h-4 w-4" />
+                  </button>
+                )}
                 <div>
                   <p className="font-heading font-semibold">Revnexa</p>
                   <div className="flex items-center gap-1.5 text-xs text-secondary-foreground/70">
@@ -100,15 +180,7 @@ export function ChatWidget() {
               </button>
             </div>
 
-            {submitted ? (
-              <div className="flex flex-col items-center gap-3 px-5 py-12 text-center">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <Send className="h-6 w-6 text-primary" />
-                </div>
-                <p className="font-heading font-semibold text-foreground">Message sent!</p>
-                <p className="text-sm text-muted-foreground">We&apos;ll be with you shortly. Check your chat app for our reply.</p>
-              </div>
-            ) : (
+            {!conversationId ? (
               <div className="space-y-4 px-5 py-5">
                 <div className="rounded-lg bg-muted p-3 text-sm text-muted-foreground">
                   Hi! Tell us about your app and we&apos;ll get back to you right away.
@@ -130,23 +202,58 @@ export function ChatWidget() {
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <Clock className="h-3.5 w-3.5 text-primary" /> {replyTime}
                 </div>
-                <div className="space-y-2">
-                  <p className="text-xs font-medium text-muted-foreground">Choose your preferred channel:</p>
-                  <div className="grid grid-cols-1 gap-2">
-                    {settings.whatsapp_number && (
-                      <Button onClick={() => handleSubmit('whatsapp')} disabled={!formValid || submitting} className="w-full justify-start gap-2" size="sm">
-                        <MessageCircle className="h-4 w-4" /> Continue on WhatsApp
-                      </Button>
-                    )}
-                    {settings.telegram_username && (
-                      <Button onClick={() => handleSubmit('telegram')} disabled={!formValid || submitting} className="w-full justify-start gap-2" size="sm">
-                        <Send className="h-4 w-4" /> Continue on Telegram
-                      </Button>
-                    )}
-                    <Button onClick={() => handleSubmit('email')} disabled={!formValid || submitting} variant="outline" className="w-full justify-start gap-2" size="sm">
-                      <Mail className="h-4 w-4" /> Send via Email
+                <Button onClick={handleStartChat} disabled={!formValid || submitting} className="w-full gap-2">
+                  {submitting ? 'Starting...' : 'Start Chat'}
+                  <Send className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : (
+              <div className="flex flex-col h-[400px]">
+                <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+                  {messages.map((msg) => (
+                    <div
+                      key={msg.id}
+                      className={`flex ${msg.sender === 'client' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div
+                        className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${
+                          msg.sender === 'client'
+                            ? 'bg-primary text-primary-foreground rounded-br-md'
+                            : 'bg-muted text-foreground rounded-bl-md'
+                        }`}
+                      >
+                        {msg.content}
+                      </div>
+                    </div>
+                  ))}
+                  <div ref={messagesEndRef} />
+                </div>
+                <div className="border-t border-border px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <Input
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      placeholder="Type your message..."
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSendMessage();
+                        }
+                      }}
+                      disabled={sendingMessage}
+                    />
+                    <Button
+                      onClick={handleSendMessage}
+                      disabled={!newMessage.trim() || sendingMessage}
+                      size="icon"
+                      className="shrink-0"
+                    >
+                      <Send className="h-4 w-4" />
                     </Button>
                   </div>
+                  <p className="mt-2 text-xs text-muted-foreground text-center">
+                    <Clock className="inline h-3 w-3" /> {replyTime}
+                  </p>
                 </div>
               </div>
             )}
