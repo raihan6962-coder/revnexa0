@@ -21,31 +21,15 @@ export default function HomePage() {
   const [faqs, setFaqs] = useState<Faq[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([
-      getPublishedFaqs(),
-      getPublishedTestimonials(),
-      getRecentBlogPosts(3),
-    ]).then(([f, t, b]) => {
-      setFaqs(f);
-      setTestimonials(t);
-      setBlogPosts(b);
-      setLoading(false);
-    });
+    getPublishedFaqs().then(setFaqs);
+    getPublishedTestimonials().then(setTestimonials);
+    getRecentBlogPosts(3).then(setBlogPosts);
   }, []);
 
   const faqPreview = faqs.slice(0, 3);
   const testimonialPreview = testimonials.slice(0, 3);
-
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-      </div>
-    );
-  }
 
   return (
     <>

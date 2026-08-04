@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Loader2 } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { PageHero } from '@/components/site/page-hero';
 import { JsonLd, breadcrumbSchema } from '@/components/site/json-ld';
 import { getPublishedBlogPosts } from '@/lib/data';
@@ -11,22 +11,9 @@ import type { BlogPost } from '@/lib/types';
 
 export default function BlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let active = true;
-    (async () => {
-      try {
-        const data = await getPublishedBlogPosts();
-        if (!active) return;
-        setPosts(data);
-      } finally {
-        if (active) setLoading(false);
-      }
-    })();
-    return () => {
-      active = false;
-    };
+    getPublishedBlogPosts().then(setPosts);
   }, []);
 
   const categories = Array.from(
@@ -35,14 +22,6 @@ export default function BlogPage() {
 
   const featured = posts[0];
   const rest = posts.slice(1);
-
-  if (loading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
 
   return (
     <>

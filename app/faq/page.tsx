@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Loader2 } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import {
   Accordion,
   AccordionContent,
@@ -20,22 +20,9 @@ const categoryOrder: FaqCategory[] = ['General', 'Process', 'Safety', 'Support']
 
 export default function FaqPage() {
   const [faqs, setFaqs] = useState<Faq[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let active = true;
-    (async () => {
-      try {
-        const data = await getPublishedFaqs();
-        if (!active) return;
-        setFaqs(data);
-      } finally {
-        if (active) setLoading(false);
-      }
-    })();
-    return () => {
-      active = false;
-    };
+    getPublishedFaqs().then(setFaqs);
   }, []);
 
   const byCategory = categoryOrder
@@ -44,14 +31,6 @@ export default function FaqPage() {
       items: faqs.filter((f) => f.category === cat),
     }))
     .filter((group) => group.items.length > 0);
-
-  if (loading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
 
   return (
     <>

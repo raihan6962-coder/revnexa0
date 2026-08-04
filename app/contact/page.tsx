@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ArrowRight, Clock, MessageCircle, Send, Mail, ShieldCheck, Loader2 } from 'lucide-react';
+import { ArrowRight, Clock, MessageCircle, Send, Mail, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PageHero } from '@/components/site/page-hero';
 import { JsonLd, breadcrumbSchema } from '@/components/site/json-ld';
@@ -10,32 +10,11 @@ import { getSiteSettings } from '@/lib/data';
 import type { SiteSettings } from '@/lib/types';
 
 export default function ContactPage() {
-  const [settings, setSettings] = useState<SiteSettings | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [settings, setSettings] = useState<SiteSettings>({});
 
   useEffect(() => {
-    let active = true;
-    (async () => {
-      try {
-        const data = await getSiteSettings();
-        if (!active) return;
-        setSettings(data);
-      } finally {
-        if (active) setLoading(false);
-      }
-    })();
-    return () => {
-      active = false;
-    };
+    getSiteSettings().then(setSettings);
   }, []);
-
-  if (loading || !settings) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
 
   const email = settings.contact_email || 'hello@revnexa.com';
   const replyTime = settings.reply_time_text || 'We typically reply within 3-5 minutes';

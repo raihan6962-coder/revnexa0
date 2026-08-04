@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle2, Star, ShieldCheck, Users, TrendingUp, Clock, Loader2 } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Star, ShieldCheck, Users, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PageHero } from '@/components/site/page-hero';
 import { SectionHeading } from '@/components/site/section-heading';
@@ -37,34 +37,15 @@ const safetyPoints = [
 
 export default function ServicePage() {
   const [faqs, setFaqs] = useState<Faq[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let active = true;
-    (async () => {
-      try {
-        const all = await getPublishedFaqs();
-        if (!active) return;
-        const serviceFaqs = all.filter(
-          (f) => f.category === 'General' || f.category === 'Process' || f.category === 'Safety',
-        );
-        setFaqs(serviceFaqs);
-      } finally {
-        if (active) setLoading(false);
-      }
-    })();
-    return () => {
-      active = false;
-    };
+    getPublishedFaqs().then((all) => {
+      const serviceFaqs = all.filter(
+        (f) => f.category === 'General' || f.category === 'Process' || f.category === 'Safety',
+      );
+      setFaqs(serviceFaqs);
+    });
   }, []);
-
-  if (loading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
 
   return (
     <>

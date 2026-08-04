@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { notFound, useParams } from 'next/navigation';
-import { ArrowRight, ArrowLeft, Clock, Loader2 } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CtaBand } from '@/components/site/cta-band';
 import { JsonLd, breadcrumbSchema, blogPostingSchema } from '@/components/site/json-ld';
@@ -16,39 +16,22 @@ export default function BlogPostPage() {
 
   const [post, setPost] = useState<BlogPost | null>(null);
   const [related, setRelated] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let active = true;
-    (async () => {
-      try {
-        const found = await getBlogPostBySlug(slug);
-        if (!active) return;
-        setPost(found);
-        if (found) {
-          const relatedPosts = await getRelatedBlogPosts(found.slug, found.category, 3);
-          if (!active) return;
-          setRelated(relatedPosts);
-        }
-      } finally {
-        if (active) setLoading(false);
+    getBlogPostBySlug(slug).then((found) => {
+      setPost(found);
+      if (found) {
+        getRelatedBlogPosts(found.slug, found.category, 3).then(setRelated);
       }
-    })();
-    return () => {
-      active = false;
-    };
+    });
   }, [slug]);
 
-  if (loading) {
+  if (!post) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-muted-foreground">Loading...</p>
       </div>
     );
-  }
-
-  if (!post) {
-    notFound();
   }
 
   return (

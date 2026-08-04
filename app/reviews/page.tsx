@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Star, ArrowRight, ImageIcon, Loader2 } from 'lucide-react';
+import { Star, ArrowRight, ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PageHero } from '@/components/site/page-hero';
 import { CtaBand } from '@/components/site/cta-band';
@@ -12,35 +12,14 @@ import type { Testimonial } from '@/lib/types';
 
 export default function ReviewsPage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let active = true;
-    (async () => {
-      try {
-        const data = await getPublishedTestimonials();
-        if (!active) return;
-        setTestimonials(data);
-      } finally {
-        if (active) setLoading(false);
-      }
-    })();
-    return () => {
-      active = false;
-    };
+    getPublishedTestimonials().then(setTestimonials);
   }, []);
 
   const categories = Array.from(
     new Set(testimonials.map((t) => t.app_category).filter(Boolean)),
   ).sort() as string[];
-
-  if (loading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
 
   return (
     <>
