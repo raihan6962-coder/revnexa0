@@ -6,6 +6,8 @@ import { MessageCircle, X, Send, Clock, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { createConversation, sendMessage, getMessages } from '@/lib/chat-db';
+import { sendTelegramNotification } from '@/lib/data';
 import type { Message } from '@/lib/types';
 
 export function ChatWidget() {
@@ -37,18 +39,15 @@ export function ChatWidget() {
 
   const fetchMessages = useCallback(async (convId: string) => {
     try {
-      const res = await fetch(`/api/messages?conversation_id=${convId}`);
-      if (res.ok) {
-        const data = await res.json();
-        setMessages(data);
-      }
+      const data = await getMessages(convId);
+      setMessages(data as Message[]);
     } catch {}
   }, []);
 
   const startPolling = useCallback((convId: string) => {
     if (pollRef.current) clearInterval(pollRef.current);
     fetchMessages(convId);
-    pollRef.current = setInterval(() => fetchMessages(convId), 3000);
+    pollRef.current = setInterval(() => fetchMessages(convId), 2000);
   }, [fetchMessages]);
 
   if (pathname?.startsWith('/admin')) return null;
@@ -59,40 +58,26 @@ export function ChatWidget() {
     setError('');
 
     try {
-      const res = await fetch('/api/conversations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ client_name: fullName.trim(), client_email: email.trim(), app_name: appName.trim() || null }),
+      const { id: convId } = await createConversation({
+        client_name: fullName.trim(),
+        client_email: email.trim(),
+        app_name: appName.trim() || null,
       });
-
-      if (!res.ok) {
-        const err = await res.json();
-        setError(err.error || 'Failed to start chat');
-        setSubmitting(false);
-        return;
-      }
-
-      const data = await res.json();
-      const convId = data.id;
 
       const initialMessage = `Hi Revnexa team, I'm ${fullName.trim()} and I found your website. I'd like to learn more about your Google Play Store review service${appName ? ` for my app ${appName}` : ''}. Could you share more details?`;
 
-      await fetch('/api/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ conversation_id: convId, sender: 'client', content: initialMessage }),
+      await sendMessage({
+        conversation_id: convId,
+        sender: 'client',
+        content: initialMessage,
       });
 
-      fetch('/api/notify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          full_name: fullName.trim(),
-          email: email.trim(),
-          app_name: appName.trim() || null,
-          message: initialMessage,
-          channel: 'chat',
-        }),
+      sendTelegramNotification({
+        full_name: fullName.trim(),
+        email: email.trim(),
+        app_name: appName.trim() || null,
+        message: initialMessage,
+        channel: 'chat',
       }).catch(() => {});
 
       setConversationId(convId);
@@ -105,6 +90,7 @@ export function ChatWidget() {
       }]);
       startPolling(convId);
     } catch (err) {
+      console.error(err);
       setError('Something went wrong. Please try again.');
     }
 
@@ -119,22 +105,19 @@ export function ChatWidget() {
     setNewMessage('');
 
     try {
-      const res = await fetch('/api/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ conversation_id: conversationId, sender: 'client', content: msgContent }),
+      const { id } = await sendMessage({
+        conversation_id: conversationId,
+        sender: 'client',
+        content: msgContent,
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        setMessages((prev) => [...prev, {
-          id: data.id,
-          conversation_id: conversationId,
-          sender: 'client',
-          content: msgContent,
-          created_at: new Date().toISOString(),
-        }]);
-      }
+      setMessages((prev) => [...prev, {
+        id,
+        conversation_id: conversationId,
+        sender: 'client',
+        content: msgContent,
+        created_at: new Date().toISOString(),
+      }]);
     } catch {}
 
     setSendingMessage(false);

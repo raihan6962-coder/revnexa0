@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { MessageCircle, Send, ArrowLeft, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { getConversations, getMessages, sendMessage } from '@/lib/chat-db';
 import type { Conversation, Message } from '@/lib/types';
 
 export default function AdminChatPage() {
@@ -35,28 +36,22 @@ export default function AdminChatPage() {
 
   async function loadConversations() {
     try {
-      const res = await fetch('/api/conversations');
-      if (res.ok) {
-        const data = await res.json();
-        setConversations(data);
-      }
+      const data = await getConversations();
+      setConversations(data as Conversation[]);
     } catch {}
   }
 
   async function loadMessages(conversationId: string) {
     try {
-      const res = await fetch(`/api/messages?conversation_id=${conversationId}`);
-      if (res.ok) {
-        const data = await res.json();
-        setMessages(data);
-      }
+      const data = await getMessages(conversationId);
+      setMessages(data as Message[]);
     } catch {}
   }
 
   const startPolling = useCallback((conversationId: string) => {
     if (pollRef.current) clearInterval(pollRef.current);
     loadMessages(conversationId);
-    pollRef.current = setInterval(() => loadMessages(conversationId), 3000);
+    pollRef.current = setInterval(() => loadMessages(conversationId), 2000);
   }, []);
 
   const handleSendMessage = async () => {
@@ -67,22 +62,19 @@ export default function AdminChatPage() {
     setNewMessage('');
 
     try {
-      const res = await fetch('/api/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ conversation_id: selected.id, sender: 'admin', content: msgContent }),
+      const { id } = await sendMessage({
+        conversation_id: selected.id,
+        sender: 'admin',
+        content: msgContent,
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        setMessages((prev) => [...prev, {
-          id: data.id,
-          conversation_id: selected.id,
-          sender: 'admin',
-          content: msgContent,
-          created_at: new Date().toISOString(),
-        }]);
-      }
+      setMessages((prev) => [...prev, {
+        id,
+        conversation_id: selected.id,
+        sender: 'admin',
+        content: msgContent,
+        created_at: new Date().toISOString(),
+      }]);
     } catch {}
 
     setSending(false);
