@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Star, TrendingUp, ShieldCheck, MessageSquareReply, BarChart3 } from 'lucide-react';
+import { ArrowRight, Star, TrendingUp, ShieldCheck, MessageSquareReply, BarChart3, CheckCircle2, Users, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TrustBar } from '@/components/site/trust-bar';
 import { SectionHeading } from '@/components/site/section-heading';
@@ -15,6 +15,13 @@ const steps = [
   { icon: MessageSquareReply, title: 'Reach Out', desc: 'Contact us via WhatsApp, Telegram, or email with your app details and goals.' },
   { icon: BarChart3, title: 'Discuss Strategy', desc: 'We review your app\u2019s current standing and discuss a tailored approach.' },
   { icon: ShieldCheck, title: 'Confirm & Deliver', desc: 'Once details are confirmed, we deliver the service with ongoing support.' },
+];
+
+const stats = [
+  { icon: Users, value: '500+', label: 'Apps Served' },
+  { icon: Star, value: '4.8', label: 'Average Rating' },
+  { icon: Clock, value: '3-5 min', label: 'Response Time' },
+  { icon: CheckCircle2, value: '100%', label: 'Authentic Reviews' },
 ];
 
 export default function HomePage() {
@@ -73,6 +80,23 @@ export default function HomePage() {
       </section>
 
       <TrustBar />
+
+      {/* Stats Section */}
+      <section className="bg-muted px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl">
+          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+            {stats.map((stat) => (
+              <div key={stat.label} className="text-center">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+                  <stat.icon className="h-6 w-6 text-primary" />
+                </div>
+                <p className="mt-3 font-heading text-2xl font-bold text-foreground">{stat.value}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Service Summary */}
       <section className="px-4 py-20 sm:px-6 lg:px-8">
@@ -192,9 +216,48 @@ export default function HomePage() {
         </section>
       )}
 
+      {/* Why Choose Us Section */}
+      <section className="bg-muted px-4 py-20 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <SectionHeading
+            eyebrow="Why Choose Us"
+            title="Why developers trust Revnexa"
+            description="We're not a marketplace or a gig site. We're a focused service provider."
+          />
+          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[
+              { icon: ShieldCheck, title: 'Authentic Engagement', desc: 'Real users, real devices, genuine feedback.' },
+              { icon: Clock, title: 'Fast Response', desc: 'We typically reply within 3-5 minutes.' },
+              { icon: CheckCircle2, title: 'Quality Over Quantity', desc: 'Fewer, higher-quality reviews that last.' },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="flex items-start gap-4 rounded-2xl border border-border bg-card p-6 shadow-premium"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                  <item.icon className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-heading font-semibold text-foreground">{item.title}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-10 text-center">
+            <Button asChild variant="outline" className="gap-2">
+              <Link href="/why-choose-us">
+                See all six reasons developers choose Revnexa
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* FAQ Preview */}
       {faqPreview.length > 0 && (
-        <section className="bg-muted px-4 py-20 sm:px-6 lg:px-8">
+        <section className="px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl">
             <SectionHeading
               eyebrow="FAQ"
@@ -228,7 +291,7 @@ export default function HomePage() {
 
       {/* Blog Preview */}
       {blogPosts.length > 0 && (
-        <section className="px-4 py-20 sm:px-6 lg:px-8">
+        <section className="bg-muted px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <SectionHeading
               eyebrow="Blog"
