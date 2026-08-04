@@ -18,6 +18,11 @@ export const metadata: Metadata = {
   },
   description:
     'Professional Google Play Store review service to help your app grow with authentic user engagement and rating improvement support.',
+  icons: {
+    icon: '/logo.png',
+    shortcut: '/logo.png',
+    apple: '/logo.png',
+  },
   openGraph: {
     type: 'website',
     locale: 'en_US',
@@ -26,12 +31,21 @@ export const metadata: Metadata = {
     title: 'Revnexa — Google Play Store Review Service',
     description:
       'Professional Google Play Store review service to help your app grow with authentic user engagement and rating improvement support.',
+    images: [
+      {
+        url: '/logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'Revnexa',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Revnexa — Google Play Store Review Service',
     description:
       'Professional Google Play Store review service to help your app grow with authentic user engagement and rating improvement support.',
+    images: ['/logo.png'],
   },
   robots: {
     index: true,

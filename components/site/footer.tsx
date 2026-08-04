@@ -44,11 +44,11 @@ export function Footer() {
           <div className="md:col-span-2">
             <Link href="/" className="flex items-center">
               <Image
-                src="/logo.svg"
+                src="/logo.png"
                 alt="Revnexa"
-                width={140}
-                height={30}
-                className="h-7 w-auto"
+                width={160}
+                height={40}
+                className="h-8 w-auto"
               />
             </Link>
             <p className="mt-4 max-w-sm text-sm text-secondary-foreground/70">

@@ -47,11 +47,11 @@ export function Header() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center">
           <Image
-            src="/logo.svg"
+            src="/logo.png"
             alt="Revnexa"
-            width={140}
-            height={30}
-            className="h-7 w-auto sm:h-8 md:h-9"
+            width={160}
+            height={40}
+            className="h-8 w-auto sm:h-9 md:h-10"
             priority
           />
         </Link>
