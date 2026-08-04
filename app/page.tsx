@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { TrustBar } from '@/components/site/trust-bar';
 import { SectionHeading } from '@/components/site/section-heading';
 import { CtaBand } from '@/components/site/cta-band';
-import { JsonLd, organizationSchema, webSiteSchema } from '@/components/site/json-ld';
+import { JsonLd, organizationSchema, webSiteSchema, professionalServiceSchema } from '@/components/site/json-ld';
 import { getPublishedFaqs, getPublishedTestimonials, getRecentBlogPosts } from '@/lib/data';
 import type { Faq, Testimonial, BlogPost } from '@/lib/types';
 
@@ -35,6 +35,7 @@ export default function HomePage() {
     <>
       <JsonLd data={organizationSchema} />
       <JsonLd data={webSiteSchema} />
+      <JsonLd data={professionalServiceSchema} />
 
       {/* Hero */}
       <section className="relative overflow-hidden bg-hero-radial px-4 pb-20 pt-32 sm:px-6 sm:pt-40 lg:px-8">

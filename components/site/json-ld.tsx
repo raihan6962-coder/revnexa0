@@ -107,6 +107,34 @@ export function blogPostingSchema(post: {
   };
 }
 
+export const professionalServiceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: 'Revnexa',
+  url: 'https://revnexa.com',
+  logo: 'https://revnexa.com/logo.png',
+  description:
+    'Professional Google Play Store review service helping Android apps grow through authentic user engagement and rating improvement.',
+  areaServed: {
+    '@type': 'GeoCircle',
+    geoMidpoint: {
+      '@type': 'GeoCoordinates',
+      latitude: 39.8283,
+      longitude: -98.5795,
+    },
+    geoRadius: '20000 km',
+  },
+  serviceType: 'Google Play Store Review Service',
+  priceRange: '$$',
+  sameAs: [],
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'Customer Service',
+    availableLanguage: 'English',
+    email: 'hello@revnexa.com',
+  },
+};
+
 export function faqSchema(faqs: { question: string; answer: string }[]) {
   return {
     '@context': 'https://schema.org',
