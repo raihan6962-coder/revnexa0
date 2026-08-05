@@ -5,9 +5,22 @@ import { JsonLd, breadcrumbSchema } from '@/components/site/json-ld';
 export const metadata: Metadata = {
   title: 'Privacy Policy | Revnexa Google Play Review Service',
   description:
-    'Learn how Revnexa collects, uses, and protects your personal information. Our privacy policy explains our data practices for website visitors and service clients.',
+    'Learn how Revnexa collects, uses, and protects your personal information. Our privacy policy covers data practices for all visitors and clients.',
+  keywords: ['revnexa privacy policy', 'data privacy', 'app review service privacy'],
   alternates: {
     canonical: 'https://revnexa.com/privacy-policy',
+  },
+  openGraph: {
+    title: 'Privacy Policy | Revnexa Google Play Review Service',
+    description:
+      'Learn how Revnexa collects, uses, and protects your personal information. Our privacy policy covers data practices for all visitors and clients.',
+    url: 'https://revnexa.com/privacy-policy',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Privacy Policy | Revnexa Google Play Review Service',
+    description:
+      'Learn how Revnexa collects, uses, and protects your personal information. Our privacy policy covers data practices for all visitors and clients.',
   },
 };
 

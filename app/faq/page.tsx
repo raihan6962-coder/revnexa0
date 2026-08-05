@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: 'FAQ | Google Play Review Service Questions Answered',
   description:
     'Get answers to common questions about Revnexa\'s Google Play review service. Learn about our process, safety, pricing, and support.',
+  keywords: ['google play review faq', 'app review questions', 'revnexa faq', 'play store review help'],
   alternates: {
     canonical: 'https://revnexa.com/faq',
   },
@@ -13,6 +14,12 @@ export const metadata: Metadata = {
     description:
       'Get answers to common questions about Revnexa\'s Google Play review service.',
     url: 'https://revnexa.com/faq',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'FAQ | Google Play Review Service Questions Answered',
+    description:
+      'Get answers to common questions about Revnexa\'s Google Play review service.',
   },
 };
 

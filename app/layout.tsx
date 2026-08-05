@@ -27,11 +27,11 @@ const sora = Sora({
 export const metadata: Metadata = {
   metadataBase: new URL('https://revnexa.com'),
   title: {
-    default: 'Google Play Reviews Service | Real User Feedback for Android Apps',
+    default: 'Google Play Reviews | Real User Feedback for Apps',
     template: '%s | Revnexa',
   },
   description:
-    'Get authentic Google Play reviews from real Android users. Improve your app rating, gain valuable feedback, and boost conversions. Start your campaign today.',
+    'Get authentic Google Play reviews from real Android users. Improve your app rating, build credibility, and boost organic downloads.',
   keywords: [
     'Google Play reviews',
     'app review service',
@@ -112,6 +112,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
+    // TODO: Replace with your actual Google Search Console verification code
     google: 'your-google-verification-code',
   },
 };

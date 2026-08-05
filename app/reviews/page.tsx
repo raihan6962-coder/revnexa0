@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: 'Client Reviews | What Developers Say About Revnexa',
   description:
     'Read authentic reviews from Android developers who used Revnexa\'s Google Play review service to improve their app rating and credibility.',
+  keywords: ['revnexa reviews', 'app review proof', 'google play review results', 'client feedback'],
   alternates: {
     canonical: 'https://revnexa.com/reviews',
   },
@@ -13,6 +14,12 @@ export const metadata: Metadata = {
     description:
       'Read authentic reviews from Android developers who used Revnexa\'s Google Play review service.',
     url: 'https://revnexa.com/reviews',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Client Reviews | What Developers Say About Revnexa',
+    description:
+      'Read authentic reviews from Android developers who used Revnexa\'s Google Play review service.',
   },
 };
 

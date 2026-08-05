@@ -6,8 +6,21 @@ export const metadata: Metadata = {
   title: 'Terms of Service | Revnexa Google Play Review Service',
   description:
     'Read the terms and conditions governing the use of Revnexa website and Google Play review services. Understand your rights and responsibilities.',
+  keywords: ['revnexa terms of service', 'service terms', 'app review terms'],
   alternates: {
     canonical: 'https://revnexa.com/terms-of-service',
+  },
+  openGraph: {
+    title: 'Terms of Service | Revnexa Google Play Review Service',
+    description:
+      'Read the terms and conditions governing the use of Revnexa website and Google Play review services.',
+    url: 'https://revnexa.com/terms-of-service',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Terms of Service | Revnexa Google Play Review Service',
+    description:
+      'Read the terms and conditions governing the use of Revnexa website and Google Play review services.',
   },
 };
 

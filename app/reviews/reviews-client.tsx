@@ -6,7 +6,7 @@ import { Star, ArrowRight, ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PageHero } from '@/components/site/page-hero';
 import { CtaBand } from '@/components/site/cta-band';
-import { JsonLd, breadcrumbSchema } from '@/components/site/json-ld';
+import { JsonLd, breadcrumbSchema, reviewSchema } from '@/components/site/json-ld';
 import { getPublishedTestimonials } from '@/lib/chat-db';
 import type { Testimonial } from '@/lib/types';
 
@@ -21,12 +21,20 @@ export default function ReviewsClient() {
     new Set(testimonials.map((t) => t.app_category).filter(Boolean)),
   ).sort() as string[];
 
+  const reviewData = testimonials.map((t) => ({
+    author: t.client_label,
+    rating: t.rating,
+    text: t.review_text,
+    date: t.created_at,
+  }));
+
   return (
     <>
       <JsonLd data={breadcrumbSchema([
         { name: 'Home', url: '/' },
         { name: 'Reviews', url: '/reviews' },
       ])} />
+      {reviewData.length > 0 && <JsonLd data={reviewSchema(reviewData)} />}
 
       <PageHero
         eyebrow="Review Proof"

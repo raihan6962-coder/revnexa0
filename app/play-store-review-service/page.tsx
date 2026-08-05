@@ -4,15 +4,22 @@ import ServiceClient from './service-client';
 export const metadata: Metadata = {
   title: 'Google Play Store Review Service | Real User Feedback',
   description:
-    'Professional Google Play Store review service. Get authentic reviews from real Android users to improve your app rating, build credibility, and boost organic downloads.',
+    'Professional Google Play review service. Get authentic reviews from real Android users to improve ratings and boost downloads.',
+  keywords: ['google play store review service', 'android app reviews', 'play store ratings', 'app review service', 'google play feedback'],
   alternates: {
     canonical: 'https://revnexa.com/play-store-review-service',
   },
   openGraph: {
     title: 'Google Play Store Review Service | Real User Feedback',
     description:
-      'Professional Google Play Store review service. Get authentic reviews from real Android users to improve your app rating.',
+      'Professional Google Play review service. Get authentic reviews from real Android users to improve ratings and boost downloads.',
     url: 'https://revnexa.com/play-store-review-service',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Google Play Store Review Service | Real User Feedback',
+    description:
+      'Professional Google Play review service. Get authentic reviews from real Android users to improve ratings and boost downloads.',
   },
 };
 

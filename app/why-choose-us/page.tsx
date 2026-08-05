@@ -4,15 +4,22 @@ import WhyChooseUsClient from './why-choose-us-client';
 export const metadata: Metadata = {
   title: 'Why Choose Revnexa | Trusted Google Play Review Service',
   description:
-    'Six reasons developers choose Revnexa for Google Play reviews: authentic engagement, full confidentiality, fast response times, quality over quantity, transparent process, and personal service.',
+    'Six reasons developers choose Revnexa: authentic engagement, confidentiality, fast response, quality reviews, transparency, and personal service.',
+  keywords: ['why choose revnexa', 'best app review service', 'google play review provider', 'trusted app reviews'],
   alternates: {
     canonical: 'https://revnexa.com/why-choose-us',
   },
   openGraph: {
     title: 'Why Choose Revnexa | Trusted Google Play Review Service',
     description:
-      'Six reasons developers choose Revnexa: authentic engagement, confidentiality, fast response, quality, transparency, and personal service.',
+      'Six reasons developers choose Revnexa: authentic engagement, confidentiality, fast response, quality reviews, transparency, and personal service.',
     url: 'https://revnexa.com/why-choose-us',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Why Choose Revnexa | Trusted Google Play Review Service',
+    description:
+      'Six reasons developers choose Revnexa: authentic engagement, confidentiality, fast response, quality reviews, transparency, and personal service.',
   },
 };
 

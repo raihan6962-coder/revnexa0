@@ -11,12 +11,12 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: 'Googlebot',
         allow: '/',
-        disallow: ['/admin', '/api'],
+        disallow: ['/admin/*', '/api/*'],
       },
       {
         userAgent: 'Bingbot',
         allow: '/',
-        disallow: ['/admin', '/api'],
+        disallow: ['/admin/*', '/api/*'],
       },
     ],
     sitemap: 'https://revnexa.com/sitemap.xml',
