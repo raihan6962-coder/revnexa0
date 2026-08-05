@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Mail, MessageCircle, Send, Clock, Lock } from 'lucide-react';
+import { Mail, MessageCircle, Send, Clock } from 'lucide-react';
 import { getSiteSettings } from '@/lib/data';
 import type { SiteSettings } from '@/lib/types';
 
@@ -91,11 +91,6 @@ export function Footer() {
                   <Link href={link.href} className="text-sm text-secondary-foreground/70 transition-colors hover:text-primary">{link.label}</Link>
                 </li>
               ))}
-              <li>
-                <Link href="/admin/login" className="flex items-center gap-1.5 text-sm text-secondary-foreground/40 transition-colors hover:text-primary">
-                  <Lock className="h-3 w-3" /> Admin
-                </Link>
-              </li>
             </ul>
           </div>
         </div>

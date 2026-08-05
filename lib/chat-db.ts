@@ -1,34 +1,18 @@
 'use client';
 
-import { getDb } from '@/lib/db';
+const API_BASE = '/api/chat';
 
-let initialized = false;
-
-async function ensureTables() {
-  if (initialized) return;
-  const db = await getDb();
-
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS conversations (
-      id TEXT PRIMARY KEY,
-      client_name TEXT NOT NULL,
-      client_email TEXT NOT NULL,
-      app_name TEXT,
-      status TEXT NOT NULL DEFAULT 'active',
-      last_message_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-    );
-
-    CREATE TABLE IF NOT EXISTS chat_messages (
-      id TEXT PRIMARY KEY,
-      conversation_id TEXT NOT NULL,
-      sender TEXT NOT NULL,
-      content TEXT NOT NULL,
-      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-    );
-  `);
-
-  initialized = true;
+async function apiCall(action: string, data: Record<string, unknown> = {}): Promise<unknown> {
+  const res = await fetch(API_BASE, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action, ...data }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Request failed' }));
+    throw new Error(err.error || 'Request failed');
+  }
+  return res.json();
 }
 
 export async function createConversation(data: {
@@ -36,26 +20,11 @@ export async function createConversation(data: {
   client_email: string;
   app_name?: string | null;
 }): Promise<{ id: string }> {
-  await ensureTables();
-  const db = await getDb();
-  const id = crypto.randomUUID();
-
-  await db.query(
-    `INSERT INTO conversations (id, client_name, client_email, app_name, status, last_message_at, created_at)
-     VALUES ($1, $2, $3, $4, 'active', now(), now())`,
-    [id, data.client_name, data.client_email, data.app_name || null]
-  );
-
-  return { id };
+  return apiCall('create_conversation', data) as Promise<{ id: string }>;
 }
 
 export async function getConversations(): Promise<any[]> {
-  await ensureTables();
-  const db = await getDb();
-  const result = await db.query(
-    `SELECT * FROM conversations ORDER BY last_message_at DESC`
-  );
-  return result.rows;
+  return apiCall('get_conversations') as Promise<any[]>;
 }
 
 export async function sendMessage(data: {
@@ -63,30 +32,9 @@ export async function sendMessage(data: {
   sender: string;
   content: string;
 }): Promise<{ id: string }> {
-  await ensureTables();
-  const db = await getDb();
-  const id = crypto.randomUUID();
-
-  await db.query(
-    `INSERT INTO chat_messages (id, conversation_id, sender, content, created_at)
-     VALUES ($1, $2, $3, $4, now())`,
-    [id, data.conversation_id, data.sender, data.content]
-  );
-
-  await db.query(
-    `UPDATE conversations SET last_message_at = now() WHERE id = $1`,
-    [data.conversation_id]
-  );
-
-  return { id };
+  return apiCall('send_message', data) as Promise<{ id: string }>;
 }
 
 export async function getMessages(conversationId: string): Promise<any[]> {
-  await ensureTables();
-  const db = await getDb();
-  const result = await db.query(
-    `SELECT * FROM chat_messages WHERE conversation_id = $1 ORDER BY created_at ASC`,
-    [conversationId]
-  );
-  return result.rows;
+  return apiCall('get_messages', { conversation_id: conversationId }) as Promise<any[]>;
 }

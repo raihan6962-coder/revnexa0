@@ -7,8 +7,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { createConversation, sendMessage, getMessages } from '@/lib/chat-db';
-import { sendTelegramNotification } from '@/lib/data';
 import type { Message } from '@/lib/types';
+
+async function notifyTelegram(data: { full_name: string; email: string; app_name?: string | null; message: string; channel: string }) {
+  try {
+    await fetch('/api/notify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+  } catch {}
+}
 
 export function ChatWidget() {
   const pathname = usePathname();
@@ -72,13 +81,13 @@ export function ChatWidget() {
         content: initialMessage,
       });
 
-      sendTelegramNotification({
+      notifyTelegram({
         full_name: fullName.trim(),
         email: email.trim(),
         app_name: appName.trim() || null,
         message: initialMessage,
         channel: 'chat',
-      }).catch(() => {});
+      });
 
       setConversationId(convId);
       setMessages([{
