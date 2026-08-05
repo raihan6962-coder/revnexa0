@@ -29,9 +29,9 @@ export default function ReviewsClient() {
       ])} />
 
       <PageHero
-        eyebrow="Reviews"
-        title="What our clients say"
-        description="Real feedback from developers who've worked with Revnexa to grow their app's review profile."
+        eyebrow="Review Proof"
+        title="Real results we have delivered"
+        description="See actual review screenshots from apps we have helped improve. Every proof is from a real client project."
         variant="dark"
       >
         <Button asChild size="lg" className="gap-2">
@@ -111,7 +111,7 @@ export default function ReviewsClient() {
 
       <CtaBand
         title="Want results like these?"
-        description="Let's talk about your app and how we can help you achieve similar growth."
+        description="Let us help you achieve the same growth for your app."
       />
     </>
   );
