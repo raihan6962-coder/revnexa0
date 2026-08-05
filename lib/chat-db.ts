@@ -124,3 +124,12 @@ export async function uploadChatFile(
     name: file.name,
   };
 }
+
+export async function uploadTestimonialImage(file: File): Promise<string> {
+  const ext = file.name.split('.').pop() || 'jpg';
+  const path = `testimonials/${Date.now()}.${ext}`;
+  const { error } = await supabase.storage.from('chat-files').upload(path, file, { contentType: file.type });
+  if (error) throw error;
+  const { data } = supabase.storage.from('chat-files').getPublicUrl(path);
+  return data.publicUrl;
+}

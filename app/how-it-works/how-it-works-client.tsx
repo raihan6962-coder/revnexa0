@@ -12,21 +12,21 @@ const steps = [
     icon: MessageSquare,
     number: '01',
     title: 'Reach Out',
-    desc: 'Contact us via WhatsApp, Telegram, or email. Tell us you\u2019re interested \u2014 no forms to fill out, no lengthy questionnaires.',
-    detail: 'Just a quick message saying hello and mentioning your app. We\u2019ll take it from there.',
+    desc: 'Contact us via WhatsApp, Telegram, or email. Tell us you\'re interested \u2014 no forms to fill out, no lengthy questionnaires.',
+    detail: 'Just a quick message saying hello and mentioning your app. We\'ll take it from there.',
   },
   {
     icon: ClipboardList,
     number: '02',
     title: 'Discuss Your App & Goals',
-    desc: 'We\u2019ll ask about your app \u2014 what it does, its current rating, and what you\u2019re hoping to achieve. This is a conversation, not an interrogation.',
+    desc: 'We\'ll ask about your app \u2014 what it does, its current rating, and what you\'re hoping to achieve. This is a conversation, not an interrogation.',
     detail: 'The more we understand your app and goals, the better we can tailor our approach to your specific situation.',
   },
   {
     icon: CheckCircle2,
     number: '03',
     title: 'Confirm Details',
-    desc: 'Once we\u2019ve discussed the approach, we confirm the details together. You\u2019ll know exactly what to expect before anything begins.',
+    desc: 'Once we\'ve discussed the approach, we confirm the details together. You\'ll know exactly what to expect before anything begins.',
     detail: 'Full transparency. No surprises, no hidden steps, no vague promises.',
   },
   {
@@ -34,14 +34,14 @@ const steps = [
     number: '04',
     title: 'Delivery',
     desc: 'We deliver the service as discussed. Throughout delivery, we monitor progress and make adjustments as needed.',
-    detail: 'You\u2019re kept informed at every stage. If you have questions during delivery, we\u2019re a message away.',
+    detail: 'You\'re kept informed at every stage. If you have questions during delivery, we\'re a message away.',
   },
   {
     icon: Headset,
     number: '05',
     title: 'Ongoing Support',
-    desc: 'After delivery, we remain available for questions, adjustments, and follow-up support. The relationship doesn\u2019t end when the service does.',
-    detail: 'We\u2019re invested in your app\u2019s long-term success, not just a one-time transaction.',
+    desc: 'After delivery, we remain available for questions, adjustments, and follow-up support. The relationship doesn\'t end when the service does.',
+    detail: 'We\'re invested in your app\'s long-term success, not just a one-time transaction.',
   },
 ];
 
@@ -56,7 +56,7 @@ export default function HowItWorksClient() {
       <PageHero
         eyebrow="How It Works"
         title="A simple, transparent process"
-        description="From your first message to ongoing support, here\u2019s exactly what to expect when you work with Revnexa."
+        description="From your first message to ongoing support, here's exactly what to expect when you work with Revnexa."
         variant="dark"
       >
         <Button asChild size="lg" className="gap-2">
@@ -104,7 +104,7 @@ export default function HowItWorksClient() {
             Ready to start?
           </h2>
           <p className="mt-4 text-muted-foreground">
-            The first step takes less than a minute. Send us a message and we\u2019ll
+            The first step takes less than a minute. Send us a message and we'll
             take care of the rest.
           </p>
           <div className="mt-8 flex flex-col items-center gap-3">

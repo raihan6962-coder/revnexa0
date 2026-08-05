@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Plus, Trash2, Edit, Star, ImageIcon } from 'lucide-react';
+import { Plus, Trash2, Edit, Star, ImageIcon, Upload } from 'lucide-react';
 import { getAllTestimonials, upsertTestimonial, deleteTestimonial } from '@/lib/data';
+import { uploadTestimonialImage } from '@/lib/chat-db';
 import type { Testimonial } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,6 +17,7 @@ export default function TestimonialsManagerPage() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Testimonial | null>(null);
   const [open, setOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => { loadTestimonials(); }, []);
 
@@ -52,6 +54,22 @@ export default function TestimonialsManagerPage() {
     setOpen(false);
     setEditing(null);
     loadTestimonials();
+  }
+
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !editing) return;
+    setUploading(true);
+    try {
+      const url = await uploadTestimonialImage(file);
+      setEditing({ ...editing, proof_image: url });
+    } catch (err) {
+      console.error('Upload failed:', err);
+      alert('Failed to upload image. Please try again.');
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
   }
 
   if (loading) return <p className="py-20 text-center text-muted-foreground">Loading testimonials...</p>;
@@ -120,7 +138,42 @@ export default function TestimonialsManagerPage() {
                 <div><Label htmlFor="rating">Rating (1-5)</Label><Input id="rating" type="number" min={1} max={5} value={editing.rating} onChange={(e) => setEditing({ ...editing, rating: parseInt(e.target.value) || 5 })} className="mt-1.5" /></div>
                 <div><Label htmlFor="order">Sort Order</Label><Input id="order" type="number" value={editing.sort_order} onChange={(e) => setEditing({ ...editing, sort_order: parseInt(e.target.value) || 0 })} className="mt-1.5" /></div>
               </div>
-              <div><Label htmlFor="proof">Proof Image URL (optional)</Label><Input id="proof" value={editing.proof_image || ''} onChange={(e) => setEditing({ ...editing, proof_image: e.target.value })} placeholder="https://..." className="mt-1.5" /></div>
+              <div>
+                <Label htmlFor="proof">Proof Image (optional)</Label>
+                <div className="mt-1.5 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Label
+                      htmlFor="proof-file"
+                      className="flex cursor-pointer items-center gap-2 rounded-md border border-border bg-muted px-3 py-2 text-sm hover:bg-muted/80"
+                    >
+                      <Upload className="h-4 w-4" />
+                      {uploading ? 'Uploading...' : 'Choose file'}
+                    </Label>
+                    <input
+                      id="proof-file"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleFileUpload}
+                      disabled={uploading}
+                    />
+                    {uploading && <span className="text-xs text-muted-foreground">Uploading...</span>}
+                  </div>
+                  {editing.proof_image && (
+                    <div className="relative">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={editing.proof_image} alt="Preview" className="h-32 rounded-lg border border-border object-cover" />
+                    </div>
+                  )}
+                  <Input
+                    id="proof"
+                    value={editing.proof_image || ''}
+                    onChange={(e) => setEditing({ ...editing, proof_image: e.target.value })}
+                    placeholder="Or paste image URL..."
+                    disabled={uploading}
+                  />
+                </div>
+              </div>
               <div className="flex items-center gap-2"><Switch checked={editing.is_published} onCheckedChange={(v) => setEditing({ ...editing, is_published: v })} /><Label>Published</Label></div>
               <div className="flex justify-end gap-2 pt-4"><Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button><Button onClick={save}>{editing.id ? 'Update' : 'Create'}</Button></div>
             </div>

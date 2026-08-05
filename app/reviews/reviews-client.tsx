@@ -31,7 +31,7 @@ export default function ReviewsClient() {
       <PageHero
         eyebrow="Reviews"
         title="What our clients say"
-        description="Real feedback from developers who\u2019ve worked with Revnexa to grow their app\u2019s review profile."
+        description="Real feedback from developers who've worked with Revnexa to grow their app's review profile."
         variant="dark"
       >
         <Button asChild size="lg" className="gap-2">
@@ -61,11 +61,7 @@ export default function ReviewsClient() {
           {testimonials.length === 0 ? (
             <div className="rounded-2xl border border-border bg-card p-12 text-center shadow-premium">
               <p className="text-muted-foreground">
-                Testimonials will appear here soon. In the meantime,{' '}
-                <Link href="/contact" className="text-primary underline">
-                  reach out to us
-                </Link>{' '}
-                to learn more.
+                No reviews yet.
               </p>
             </div>
           ) : (
@@ -115,7 +111,7 @@ export default function ReviewsClient() {
 
       <CtaBand
         title="Want results like these?"
-        description="Let\u2019s talk about your app and how we can help you achieve similar growth."
+        description="Let's talk about your app and how we can help you achieve similar growth."
       />
     </>
   );
