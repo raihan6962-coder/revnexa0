@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { PageHero } from '@/components/site/page-hero';
 import { CtaBand } from '@/components/site/cta-band';
 import { JsonLd, breadcrumbSchema, faqSchema } from '@/components/site/json-ld';
-import { getPublishedFaqs } from '@/lib/data';
+import { getPublishedFaqs } from '@/lib/chat-db';
 import type { Faq, FaqCategory } from '@/lib/types';
 
 const categoryOrder: FaqCategory[] = ['General', 'Process', 'Safety', 'Support'];

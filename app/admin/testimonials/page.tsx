@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Plus, Trash2, Edit, Star, ImageIcon, Upload } from 'lucide-react';
-import { getAllTestimonials, upsertTestimonial, deleteTestimonial } from '@/lib/data';
-import { uploadTestimonialImage } from '@/lib/chat-db';
+import { getAllTestimonials, upsertTestimonial, deleteTestimonial, uploadTestimonialImage } from '@/lib/chat-db';
 import type { Testimonial } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

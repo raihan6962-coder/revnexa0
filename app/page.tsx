@@ -8,7 +8,8 @@ import { TrustBar } from '@/components/site/trust-bar';
 import { SectionHeading } from '@/components/site/section-heading';
 import { CtaBand } from '@/components/site/cta-band';
 import { JsonLd, organizationSchema, webSiteSchema, professionalServiceSchema } from '@/components/site/json-ld';
-import { getPublishedFaqs, getPublishedTestimonials, getRecentBlogPosts } from '@/lib/data';
+import { getRecentBlogPosts } from '@/lib/data';
+import { getPublishedFaqs, getPublishedTestimonials } from '@/lib/chat-db';
 import type { Faq, Testimonial, BlogPost } from '@/lib/types';
 
 const steps = [

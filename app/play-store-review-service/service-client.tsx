@@ -8,7 +8,7 @@ import { PageHero } from '@/components/site/page-hero';
 import { SectionHeading } from '@/components/site/section-heading';
 import { CtaBand } from '@/components/site/cta-band';
 import { JsonLd, serviceSchema, faqSchema, breadcrumbSchema } from '@/components/site/json-ld';
-import { getPublishedFaqs } from '@/lib/data';
+import { getPublishedFaqs } from '@/lib/chat-db';
 import type { Faq } from '@/lib/types';
 
 const whatsIncluded = [

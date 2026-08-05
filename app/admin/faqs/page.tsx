@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Plus, Trash2, Edit, HelpCircle } from 'lucide-react';
-import { getAllFaqs, upsertFaq, deleteFaq } from '@/lib/data';
+import { getAllFaqs, upsertFaq, deleteFaq } from '@/lib/chat-db';
 import type { Faq, FaqCategory } from '@/lib/types';
 import { FAQ_CATEGORIES } from '@/lib/types';
 import { Button } from '@/components/ui/button';

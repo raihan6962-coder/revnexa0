@@ -1,7 +1,7 @@
 'use client';
 
 import { supabase } from './supabase';
-import type { Conversation, Message, MessageSender } from './types';
+import type { Conversation, Message, MessageSender, Testimonial, Faq } from './types';
 
 export async function createConversation(data: {
   client_name: string;
@@ -132,4 +132,98 @@ export async function uploadTestimonialImage(file: File): Promise<string> {
   if (error) throw error;
   const { data } = supabase.storage.from('chat-files').getPublicUrl(path);
   return data.publicUrl;
+}
+
+// Testimonials
+export async function getPublishedTestimonials(): Promise<Testimonial[]> {
+  const { data, error } = await supabase
+    .from('testimonials')
+    .select('*')
+    .eq('is_published', true)
+    .order('sort_order', { ascending: true });
+  if (error) throw error;
+  return data || [];
+}
+
+export async function getAllTestimonials(): Promise<Testimonial[]> {
+  const { data, error } = await supabase
+    .from('testimonials')
+    .select('*')
+    .order('sort_order', { ascending: true });
+  if (error) throw error;
+  return data || [];
+}
+
+export async function upsertTestimonial(t: Partial<Testimonial> & { client_label: string; review_text: string }): Promise<void> {
+  if (t.id) {
+    await supabase.from('testimonials').update({
+      client_label: t.client_label,
+      country: t.country || null,
+      app_category: t.app_category || null,
+      review_text: t.review_text,
+      rating: t.rating || 5,
+      proof_image: t.proof_image || null,
+      is_published: t.is_published || false,
+      sort_order: t.sort_order || 0,
+    }).eq('id', t.id);
+  } else {
+    await supabase.from('testimonials').insert({
+      client_label: t.client_label,
+      country: t.country || null,
+      app_category: t.app_category || null,
+      review_text: t.review_text,
+      rating: t.rating || 5,
+      proof_image: t.proof_image || null,
+      is_published: t.is_published || false,
+      sort_order: t.sort_order || 0,
+    });
+  }
+}
+
+export async function deleteTestimonial(id: string): Promise<void> {
+  await supabase.from('testimonials').delete().eq('id', id);
+}
+
+// FAQs
+export async function getPublishedFaqs(): Promise<Faq[]> {
+  const { data, error } = await supabase
+    .from('faqs')
+    .select('*')
+    .eq('is_published', true)
+    .order('sort_order', { ascending: true });
+  if (error) throw error;
+  return data || [];
+}
+
+export async function getAllFaqs(): Promise<Faq[]> {
+  const { data, error } = await supabase
+    .from('faqs')
+    .select('*')
+    .order('sort_order', { ascending: true });
+  if (error) throw error;
+  return data || [];
+}
+
+export async function upsertFaq(faq: Partial<Faq> & { question: string; answer: string }): Promise<void> {
+  if (faq.id) {
+    await supabase.from('faqs').update({
+      question: faq.question,
+      answer: faq.answer,
+      category: faq.category || 'General',
+      sort_order: faq.sort_order || 0,
+      is_published: faq.is_published || false,
+    }).eq('id', faq.id);
+  } else {
+    await supabase.from('faqs').insert({
+      question: faq.question,
+      answer: faq.answer,
+      category: faq.category || 'General',
+      sort_order: faq.sort_order || 0,
+      is_published: faq.is_published || false,
+    });
+  }
+}
+
+export async function deleteFaq(id: string): Promise<void> {
+  await supabase.from('faqs').delete().eq('id', id);
 }

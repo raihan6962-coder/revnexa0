@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { PageHero } from '@/components/site/page-hero';
 import { CtaBand } from '@/components/site/cta-band';
 import { JsonLd, breadcrumbSchema } from '@/components/site/json-ld';
-import { getPublishedTestimonials } from '@/lib/data';
+import { getPublishedTestimonials } from '@/lib/chat-db';
 import type { Testimonial } from '@/lib/types';
 
 export default function ReviewsClient() {

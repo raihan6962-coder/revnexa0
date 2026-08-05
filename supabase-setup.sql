@@ -59,3 +59,36 @@ ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = now();
 
 INSERT INTO site_settings (key, value) VALUES ('telegram_chat_id', '7740020918')
 ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = now();
+
+-- Testimonials table
+CREATE TABLE IF NOT EXISTS testimonials (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_label TEXT NOT NULL,
+  country TEXT,
+  app_category TEXT,
+  review_text TEXT NOT NULL,
+  rating INTEGER NOT NULL DEFAULT 5,
+  proof_image TEXT,
+  is_published BOOLEAN NOT NULL DEFAULT false,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE testimonials ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow all on testimonials" ON testimonials;
+CREATE POLICY "Allow all on testimonials" ON testimonials FOR ALL USING (true) WITH CHECK (true);
+
+-- FAQs table
+CREATE TABLE IF NOT EXISTS faqs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  question TEXT NOT NULL,
+  answer TEXT NOT NULL,
+  category TEXT NOT NULL DEFAULT 'General',
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  is_published BOOLEAN NOT NULL DEFAULT false,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE faqs ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow all on faqs" ON faqs;
+CREATE POLICY "Allow all on faqs" ON faqs FOR ALL USING (true) WITH CHECK (true);
