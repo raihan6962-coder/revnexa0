@@ -270,27 +270,10 @@ export async function sendTelegramNotification(data: {
   channel: string;
 }): Promise<void> {
   try {
-    const settings = await getSiteSettings();
-    const botToken = settings.telegram_bot_token;
-    const chatId = settings.telegram_chat_id;
-
-    if (!botToken || !chatId) return;
-
-    const text = [
-      '🔔 New Revnexa Inquiry',
-      '',
-      `👤 Name: ${data.full_name}`,
-      `📧 Email: ${data.email}`,
-      data.app_name ? `📱 App: ${data.app_name}` : '',
-      `💬 Channel: ${data.channel}`,
-      '',
-      `💬 Message: ${data.message}`,
-    ].filter(Boolean).join('\n');
-
-    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+    await fetch('/api/notify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: chatId, text }),
+      body: JSON.stringify(data),
     });
   } catch {
     // Non-blocking

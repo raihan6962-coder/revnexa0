@@ -7,10 +7,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { createConversation, sendMessage, getMessages, uploadChatFile } from '@/lib/chat-db';
-import { sendTelegramNotification } from '@/lib/data';
 import type { Message } from '@/lib/types';
 
 const CHAT_STORAGE_KEY = 'revnexa_active_chat';
+
+async function notifyTelegram(data: { full_name: string; email: string; app_name?: string | null; message: string; channel: string }) {
+  try {
+    await fetch('/api/notify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+  } catch {}
+}
 
 export function ChatWidget() {
   const pathname = usePathname();
@@ -106,7 +115,7 @@ export function ChatWidget() {
         content: initialMessage,
       });
 
-      sendTelegramNotification({
+      notifyTelegram({
         full_name: fullName.trim(),
         email: email.trim(),
         app_name: appName.trim() || null,
