@@ -35,7 +35,7 @@ export function Footer() {
 
   const whatsapp = settings.whatsapp_number;
   const telegram = settings.telegram_username;
-  const email = settings.contact_email || 'hello@revnexa.com';
+  const email = settings.contact_email || 'hello@revnexa.site';
   const replyTime = settings.reply_time_text || 'We typically reply within 3-5 minutes';
   const whatsappMsg = encodeURIComponent('Hi Revnexa team! I found your website and I am interested in your Google Play Store review service. Could you share more details?');
   const telegramMsg = encodeURIComponent('Hi Revnexa team! I found your website and I am interested in your Google Play Store review service. Could you share more details?');

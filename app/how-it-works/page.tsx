@@ -7,13 +7,13 @@ export const metadata: Metadata = {
     'Learn how Revnexa delivers authentic Google Play reviews. A simple, transparent 5-step process from your first message to ongoing support.',
   keywords: ['how to get google play reviews', 'app review process', 'google play rating service', 'revnexa process'],
   alternates: {
-    canonical: 'https://revnexa.com/how-it-works',
+    canonical: 'https://revnexa.site/how-it-works',
   },
   openGraph: {
     title: 'How It Works | Google Play Review Process',
     description:
       'Learn how Revnexa delivers authentic Google Play reviews. A simple, transparent 5-step process.',
-    url: 'https://revnexa.com/how-it-works',
+    url: 'https://revnexa.site/how-it-works',
   },
   twitter: {
     card: 'summary_large_image',

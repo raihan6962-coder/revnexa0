@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 import { getPublishedBlogPosts } from '@/lib/data';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://revnexa.com';
+  const baseUrl = 'https://revnexa.site';
   const now = new Date();
 
   const staticPages: MetadataRoute.Sitemap = [

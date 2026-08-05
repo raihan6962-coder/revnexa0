@@ -96,7 +96,7 @@ export const SEED_SQL = `
 INSERT INTO site_settings (key, value) VALUES
   ('whatsapp_number', ''),
   ('telegram_username', ''),
-  ('contact_email', 'hello@revnexa.com'),
+  ('contact_email', 'hello@revnexa.site'),
   ('discord_url', ''),
   ('reply_time_text', 'We typically reply within 3-5 minutes'),
   ('default_meta_title', 'Revnexa - Google Play Store Review Service'),

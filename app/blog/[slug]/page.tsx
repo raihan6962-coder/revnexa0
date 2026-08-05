@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: post.meta_title || post.title,
       description: post.meta_description || `Read about ${post.title.toLowerCase()}.`,
-      url: `https://revnexa.com/blog/${params.slug}`,
+      url: `https://revnexa.site/blog/${params.slug}`,
       siteName: 'Revnexa',
       type: 'article',
     },
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: post.meta_description || `Read about ${post.title.toLowerCase()}.`,
     },
     alternates: {
-      canonical: `https://revnexa.com/blog/${params.slug}`,
+      canonical: `https://revnexa.site/blog/${params.slug}`,
     },
   };
 }

@@ -8,13 +8,13 @@ export const metadata: Metadata = {
     'Learn how Revnexa collects, uses, and protects your personal information. Our privacy policy covers data practices for all visitors and clients.',
   keywords: ['revnexa privacy policy', 'data privacy', 'app review service privacy'],
   alternates: {
-    canonical: 'https://revnexa.com/privacy-policy',
+    canonical: 'https://revnexa.site/privacy-policy',
   },
   openGraph: {
     title: 'Privacy Policy | Revnexa Google Play Review Service',
     description:
       'Learn how Revnexa collects, uses, and protects your personal information. Our privacy policy covers data practices for all visitors and clients.',
-    url: 'https://revnexa.com/privacy-policy',
+    url: 'https://revnexa.site/privacy-policy',
   },
   twitter: {
     card: 'summary_large_image',
@@ -47,7 +47,7 @@ export default function PrivacyPolicyPage() {
           <div>
             <h2 className="font-heading text-xl font-bold text-foreground">1. Introduction</h2>
             <p className="mt-3 text-muted-foreground">
-              Welcome to Revnexa (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;). We operate the website revnexa.com and provide Google Play Store review growth support services. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services. By accessing or using our website, you agree to the collection and use of information in accordance with this policy.
+              Welcome to Revnexa (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;). We operate the website revnexa.site and provide Google Play Store review growth support services. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services. By accessing or using our website, you agree to the collection and use of information in accordance with this policy.
             </p>
             <p className="mt-3 text-muted-foreground">
               We are committed to protecting your privacy and ensuring transparency in our data practices. This policy applies to all visitors, users, and clients of our website and services. We encourage you to read this document carefully and reach out if you have any questions.

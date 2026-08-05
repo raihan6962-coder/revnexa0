@@ -19,6 +19,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin/*', '/api/*'],
       },
     ],
-    sitemap: 'https://revnexa.com/sitemap.xml',
+    sitemap: 'https://revnexa.site/sitemap.xml',
   };
 }

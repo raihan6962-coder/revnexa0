@@ -15,8 +15,8 @@ export const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'Revnexa',
-  url: 'https://revnexa.com',
-  logo: 'https://revnexa.com/logo.png',
+  url: 'https://revnexa.site',
+  logo: 'https://revnexa.site/logo.png',
   description:
     'Ethical Google Play review and user feedback service for Android apps. Real users, real devices, organic engagement patterns.',
   areaServed: ['US', 'GB', 'CA', 'AU'],
@@ -32,7 +32,7 @@ export const webSiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'Revnexa',
-  url: 'https://revnexa.com',
+  url: 'https://revnexa.site',
   description:
     'Professional Google Play Store review service to help your app grow with authentic user engagement and rating improvement support.',
   publisher: {
@@ -40,14 +40,14 @@ export const webSiteSchema = {
     name: 'Revnexa',
     logo: {
       '@type': 'ImageObject',
-      url: 'https://revnexa.com/logo.png',
+      url: 'https://revnexa.site/logo.png',
     },
   },
   potentialAction: {
     '@type': 'SearchAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: 'https://revnexa.com/blog?q={search_term_string}',
+      urlTemplate: 'https://revnexa.site/blog?q={search_term_string}',
     },
     'query-input': 'required name=search_term_string',
   },
@@ -57,9 +57,9 @@ export const professionalServiceSchema = {
   '@context': 'https://schema.org',
   '@type': 'ProfessionalService',
   name: 'Revnexa',
-  url: 'https://revnexa.com',
-  logo: 'https://revnexa.com/logo.png',
-  image: 'https://revnexa.com/logo.png',
+  url: 'https://revnexa.site',
+  logo: 'https://revnexa.site/logo.png',
+  image: 'https://revnexa.site/logo.png',
   description:
     'Professional Google Play Store review service helping Android apps grow through authentic user engagement and rating improvement.',
   areaServed: {
@@ -78,7 +78,7 @@ export const professionalServiceSchema = {
     '@type': 'ContactPoint',
     contactType: 'Customer Service',
     availableLanguage: 'English',
-    email: 'hello@revnexa.com',
+    email: 'hello@revnexa.site',
   },
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
@@ -112,7 +112,7 @@ export function serviceSchema() {
     provider: {
       '@type': 'Organization',
       name: 'Revnexa',
-      url: 'https://revnexa.com',
+      url: 'https://revnexa.site',
     },
     serviceType: 'Google Play Store Review Generation',
     areaServed: 'Worldwide',
@@ -159,7 +159,7 @@ export function breadcrumbSchema(items: { name: string; url: string }[]) {
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: `https://revnexa.com${item.url}`,
+      item: `https://revnexa.site${item.url}`,
     })),
   };
 }
@@ -186,12 +186,12 @@ export function blogPostingSchema(post: {
       name: 'Revnexa',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://revnexa.com/logo.png',
+        url: 'https://revnexa.site/logo.png',
       },
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://revnexa.com/blog/${post.slug}`,
+      '@id': `https://revnexa.site/blog/${post.slug}`,
     },
   };
 }

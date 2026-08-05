@@ -7,13 +7,13 @@ export const metadata: Metadata = {
     'Six reasons developers choose Revnexa: authentic engagement, confidentiality, fast response, quality reviews, transparency, and personal service.',
   keywords: ['why choose revnexa', 'best app review service', 'google play review provider', 'trusted app reviews'],
   alternates: {
-    canonical: 'https://revnexa.com/why-choose-us',
+    canonical: 'https://revnexa.site/why-choose-us',
   },
   openGraph: {
     title: 'Why Choose Revnexa | Trusted Google Play Review Service',
     description:
       'Six reasons developers choose Revnexa: authentic engagement, confidentiality, fast response, quality reviews, transparency, and personal service.',
-    url: 'https://revnexa.com/why-choose-us',
+    url: 'https://revnexa.site/why-choose-us',
   },
   twitter: {
     card: 'summary_large_image',

@@ -8,13 +8,13 @@ export const metadata: Metadata = {
     'Read the terms and conditions governing the use of Revnexa website and Google Play review services. Understand your rights and responsibilities.',
   keywords: ['revnexa terms of service', 'service terms', 'app review terms'],
   alternates: {
-    canonical: 'https://revnexa.com/terms-of-service',
+    canonical: 'https://revnexa.site/terms-of-service',
   },
   openGraph: {
     title: 'Terms of Service | Revnexa Google Play Review Service',
     description:
       'Read the terms and conditions governing the use of Revnexa website and Google Play review services.',
-    url: 'https://revnexa.com/terms-of-service',
+    url: 'https://revnexa.site/terms-of-service',
   },
   twitter: {
     card: 'summary_large_image',
@@ -47,7 +47,7 @@ export default function TermsOfServicePage() {
           <div>
             <h2 className="font-heading text-xl font-bold text-foreground">1. Acceptance of Terms</h2>
             <p className="mt-3 text-muted-foreground">
-              By accessing and using the Revnexa website (revnexa.com) and our services, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service. If you do not agree with any part of these terms, you must not use our website or services. These terms constitute a legally binding agreement between you and Revnexa.
+              By accessing and using the Revnexa website (revnexa.site) and our services, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service. If you do not agree with any part of these terms, you must not use our website or services. These terms constitute a legally binding agreement between you and Revnexa.
             </p>
             <p className="mt-3 text-muted-foreground">
               We reserve the right to modify these terms at any time. Changes become effective immediately upon posting to this page. Your continued use of our website or services after any modifications indicates your acceptance of the updated terms. We recommend checking this page periodically for updates.

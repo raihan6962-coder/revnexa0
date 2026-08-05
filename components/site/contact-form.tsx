@@ -41,7 +41,7 @@ export function ContactForm({ settings }: ContactFormProps) {
     } else if (channel === 'telegram' && settings.telegram_username) {
       window.open(`https://t.me/${settings.telegram_username}?text=${encodeURIComponent(message)}`, '_blank');
     } else if (channel === 'email') {
-      const contactEmail = settings.contact_email || 'hello@revnexa.com';
+      const contactEmail = settings.contact_email || 'hello@revnexa.site';
       const subject = 'Inquiry about Google Play Store Review Service';
       window.location.href = `mailto:${contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
     }

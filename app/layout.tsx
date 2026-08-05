@@ -25,7 +25,7 @@ const sora = Sora({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://revnexa.com'),
+  metadataBase: new URL('https://revnexa.site'),
   title: {
     default: 'Google Play Reviews | Real User Feedback for Apps',
     template: '%s | Revnexa',
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://revnexa.com',
+    url: 'https://revnexa.site',
     siteName: 'Revnexa',
     title: 'Google Play Reviews Service | Real User Feedback for Android Apps',
     description:
@@ -106,9 +106,9 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: 'https://revnexa.com',
+    canonical: 'https://revnexa.site',
     languages: {
-      'en-US': 'https://revnexa.com',
+      'en-US': 'https://revnexa.site',
     },
   },
   verification: {

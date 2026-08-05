@@ -7,13 +7,13 @@ export const metadata: Metadata = {
     'Expert insights on Google Play reviews, app ratings, ASO strategies, and growth tactics to help Android developers succeed.',
   keywords: ['app review blog', 'google play tips', 'aso blog', 'android app growth'],
   alternates: {
-    canonical: 'https://revnexa.com/blog',
+    canonical: 'https://revnexa.site/blog',
   },
   openGraph: {
     title: 'Blog | Google Play Reviews & App Growth Insights',
     description:
       'Expert insights on Google Play reviews, app ratings, ASO strategies, and growth tactics.',
-    url: 'https://revnexa.com/blog',
+    url: 'https://revnexa.site/blog',
   },
   twitter: {
     card: 'summary_large_image',
