@@ -2,11 +2,11 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
-import { MessageCircle, X, Send, Clock, ArrowLeft } from 'lucide-react';
+import { MessageCircle, X, Send, Clock, ArrowLeft, Paperclip, Image, FileIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { createConversation, sendMessage, getMessages } from '@/lib/chat-db';
+import { createConversation, sendMessage, getMessages, uploadChatFile } from '@/lib/chat-db';
 import type { Message } from '@/lib/types';
 
 async function notifyTelegram(data: { full_name: string; email: string; app_name?: string | null; message: string; channel: string }) {
@@ -31,8 +31,10 @@ export function ChatWidget() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [sendingMessage, setSendingMessage] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const replyTime = 'We typically reply within 3-5 minutes';
 
@@ -56,7 +58,7 @@ export function ChatWidget() {
   const startPolling = useCallback((convId: string) => {
     if (pollRef.current) clearInterval(pollRef.current);
     fetchMessages(convId);
-    pollRef.current = setInterval(() => fetchMessages(convId), 2000);
+    pollRef.current = setInterval(() => fetchMessages(convId), 3000);
   }, [fetchMessages]);
 
   if (pathname?.startsWith('/admin')) return null;
@@ -90,13 +92,7 @@ export function ChatWidget() {
       });
 
       setConversationId(convId);
-      setMessages([{
-        id: 'temp-1',
-        conversation_id: convId,
-        sender: 'client',
-        content: initialMessage,
-        created_at: new Date().toISOString(),
-      }]);
+      setMessages([]);
       startPolling(convId);
     } catch (err) {
       console.error(err);
@@ -107,29 +103,44 @@ export function ChatWidget() {
   };
 
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !conversationId) return;
-    setSendingMessage(true);
+    if ((!newMessage.trim() && !uploading) || !conversationId) return;
+    if (newMessage.trim() && !uploading) {
+      setSendingMessage(true);
+      const msgContent = newMessage;
+      setNewMessage('');
 
-    const msgContent = newMessage;
-    setNewMessage('');
+      try {
+        await sendMessage({
+          conversation_id: conversationId,
+          sender: 'client',
+          content: msgContent,
+        });
+      } catch {}
 
+      setSendingMessage(false);
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !conversationId) return;
+
+    setUploading(true);
     try {
-      const { id } = await sendMessage({
+      const { url, type, name } = await uploadChatFile(file, conversationId);
+      await sendMessage({
         conversation_id: conversationId,
         sender: 'client',
-        content: msgContent,
+        content: name,
+        file_url: url,
+        file_type: type,
+        file_name: name,
       });
-
-      setMessages((prev) => [...prev, {
-        id,
-        conversation_id: conversationId,
-        sender: 'client',
-        content: msgContent,
-        created_at: new Date().toISOString(),
-      }]);
-    } catch {}
-
-    setSendingMessage(false);
+    } catch (err) {
+      console.error('Upload failed:', err);
+    }
+    setUploading(false);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleBackToForm = () => {
@@ -151,6 +162,30 @@ export function ChatWidget() {
   };
 
   const formValid = fullName.trim().length > 0 && email.trim().length > 0;
+
+  const renderFileAttachment = (msg: Message) => {
+    if (!msg.file_url) return null;
+
+    if (msg.file_type?.startsWith('image/')) {
+      return (
+        <a href={msg.file_url} target="_blank" rel="noopener noreferrer" className="block mt-1">
+          <img src={msg.file_url} alt={msg.file_name || 'Image'} className="max-w-[200px] max-h-[150px] rounded-lg object-cover" />
+        </a>
+      );
+    }
+
+    return (
+      <a
+        href={msg.file_url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-2 mt-1 rounded-lg bg-white/10 px-3 py-2 text-xs hover:bg-white/20 transition-colors"
+      >
+        <FileIcon className="h-4 w-4 shrink-0" />
+        <span className="truncate">{msg.file_name || 'File'}</span>
+      </a>
+    );
+  };
 
   return (
     <>
@@ -240,14 +275,39 @@ export function ChatWidget() {
                             : 'bg-muted text-foreground rounded-bl-md'
                         }`}
                       >
-                        {msg.content}
+                        {msg.content && <p>{msg.content}</p>}
+                        {renderFileAttachment(msg)}
                       </div>
                     </div>
                   ))}
+                  {uploading && (
+                    <div className="flex justify-end">
+                      <div className="bg-primary/20 text-primary rounded-2xl px-4 py-2.5 text-sm">
+                        Uploading file...
+                      </div>
+                    </div>
+                  )}
                   <div ref={messagesEndRef} />
                 </div>
                 <div className="border-t border-border px-4 py-3">
                   <div className="flex items-center gap-2">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*,.pdf,.doc,.docx,.txt"
+                      className="hidden"
+                      onChange={handleFileUpload}
+                    />
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="shrink-0"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                      title="Attach file"
+                    >
+                      <Paperclip className="h-4 w-4" />
+                    </Button>
                     <Input
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
@@ -262,7 +322,7 @@ export function ChatWidget() {
                     />
                     <Button
                       onClick={handleSendMessage}
-                      disabled={!newMessage.trim() || sendingMessage}
+                      disabled={(!newMessage.trim() && !uploading) || sendingMessage}
                       size="icon"
                       className="shrink-0"
                     >

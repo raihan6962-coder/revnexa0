@@ -32,6 +32,9 @@ export interface Message {
   conversation_id: string;
   sender: MessageSender;
   content: string;
+  file_url: string | null;
+  file_type: string | null;
+  file_name: string | null;
   created_at: string;
 }
 

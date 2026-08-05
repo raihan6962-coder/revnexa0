@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { MessageCircle, Send, ArrowLeft, User } from 'lucide-react';
+import { MessageCircle, Send, ArrowLeft, User, Paperclip, FileIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { getConversations, getMessages, sendMessage } from '@/lib/chat-db';
+import { getConversations, getMessages, sendMessage, uploadChatFile, closeConversation } from '@/lib/chat-db';
 import type { Conversation, Message } from '@/lib/types';
 
 export default function AdminChatPage() {
@@ -13,11 +13,17 @@ export default function AdminChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadConversations();
+    pollRef.current = setInterval(loadConversations, 5000);
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
   }, []);
 
   useEffect(() => {
@@ -51,7 +57,7 @@ export default function AdminChatPage() {
   const startPolling = useCallback((conversationId: string) => {
     if (pollRef.current) clearInterval(pollRef.current);
     loadMessages(conversationId);
-    pollRef.current = setInterval(() => loadMessages(conversationId), 2000);
+    pollRef.current = setInterval(() => loadMessages(conversationId), 3000);
   }, []);
 
   const handleSendMessage = async () => {
@@ -62,22 +68,47 @@ export default function AdminChatPage() {
     setNewMessage('');
 
     try {
-      const { id } = await sendMessage({
+      await sendMessage({
         conversation_id: selected.id,
         sender: 'admin',
         content: msgContent,
       });
-
-      setMessages((prev) => [...prev, {
-        id,
-        conversation_id: selected.id,
-        sender: 'admin',
-        content: msgContent,
-        created_at: new Date().toISOString(),
-      }]);
     } catch {}
 
     setSending(false);
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !selected) return;
+
+    setUploading(true);
+    try {
+      const { url, type, name } = await uploadChatFile(file, selected.id);
+      await sendMessage({
+        conversation_id: selected.id,
+        sender: 'admin',
+        content: name,
+        file_url: url,
+        file_type: type,
+        file_name: name,
+      });
+    } catch (err) {
+      console.error('Upload failed:', err);
+    }
+    setUploading(false);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleClose = async () => {
+    if (!selected) return;
+    try {
+      await closeConversation(selected.id);
+      setConversations((prev) =>
+        prev.map((c) => (c.id === selected.id ? { ...c, status: 'closed' } : c))
+      );
+      setSelected({ ...selected, status: 'closed' });
+    } catch {}
   };
 
   const handleBack = () => {
@@ -86,11 +117,37 @@ export default function AdminChatPage() {
     setMessages([]);
   };
 
+  const renderFileAttachment = (msg: Message) => {
+    if (!msg.file_url) return null;
+
+    if (msg.file_type?.startsWith('image/')) {
+      return (
+        <a href={msg.file_url} target="_blank" rel="noopener noreferrer" className="block mt-1">
+          <img src={msg.file_url} alt={msg.file_name || 'Image'} className="max-w-[250px] max-h-[200px] rounded-lg object-cover" />
+        </a>
+      );
+    }
+
+    return (
+      <a
+        href={msg.file_url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-2 mt-1 rounded-lg bg-white/10 px-3 py-2 text-xs hover:bg-white/20 transition-colors"
+      >
+        <FileIcon className="h-4 w-4 shrink-0" />
+        <span className="truncate">{msg.file_name || 'File'}</span>
+      </a>
+    );
+  };
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-heading text-2xl font-bold text-foreground">Live Chat</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{conversations.length} total conversations</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="font-heading text-2xl font-bold text-foreground">Live Chat</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{conversations.length} total conversations</p>
+        </div>
       </div>
 
       {!selected ? (
@@ -138,17 +195,24 @@ export default function AdminChatPage() {
         </div>
       ) : (
         <div className="rounded-xl border border-border bg-card shadow-premium overflow-hidden">
-          <div className="flex items-center gap-3 border-b border-border bg-muted/50 px-4 py-3">
-            <button onClick={handleBack} className="rounded-md p-1 text-muted-foreground hover:text-foreground" aria-label="Back">
-              <ArrowLeft className="h-4 w-4" />
-            </button>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-              <User className="h-4 w-4 text-primary" />
+          <div className="flex items-center justify-between border-b border-border bg-muted/50 px-4 py-3">
+            <div className="flex items-center gap-3">
+              <button onClick={handleBack} className="rounded-md p-1 text-muted-foreground hover:text-foreground" aria-label="Back">
+                <ArrowLeft className="h-4 w-4" />
+              </button>
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+                <User className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-foreground">{selected.client_name}</p>
+                <p className="text-xs text-muted-foreground">{selected.client_email}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm font-medium text-foreground">{selected.client_name}</p>
-              <p className="text-xs text-muted-foreground">{selected.client_email}</p>
-            </div>
+            {selected.status === 'active' && (
+              <Button variant="outline" size="sm" onClick={handleClose}>
+                Close Chat
+              </Button>
+            )}
           </div>
 
           <div className="flex flex-col h-[500px]">
@@ -168,37 +232,64 @@ export default function AdminChatPage() {
                         : 'bg-muted text-foreground rounded-bl-md'
                     }`}
                   >
-                    {msg.content}
+                    {msg.content && <p>{msg.content}</p>}
+                    {renderFileAttachment(msg)}
                   </div>
                 </div>
               ))}
+              {uploading && (
+                <div className="flex justify-start">
+                  <div className="bg-muted text-muted-foreground rounded-2xl px-4 py-2.5 text-sm">
+                    Uploading file...
+                  </div>
+                </div>
+              )}
               <div ref={messagesEndRef} />
             </div>
 
-            <div className="border-t border-border px-4 py-3">
-              <div className="flex items-center gap-2">
-                <Input
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  placeholder="Type your reply..."
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSendMessage();
-                    }
-                  }}
-                  disabled={sending}
-                />
-                <Button
-                  onClick={handleSendMessage}
-                  disabled={!newMessage.trim() || sending}
-                  size="icon"
-                  className="shrink-0"
-                >
-                  <Send className="h-4 w-4" />
-                </Button>
+            {selected.status === 'active' && (
+              <div className="border-t border-border px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*,.pdf,.doc,.docx,.txt"
+                    className="hidden"
+                    onChange={handleFileUpload}
+                  />
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="shrink-0"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                    title="Attach file"
+                  >
+                    <Paperclip className="h-4 w-4" />
+                  </Button>
+                  <Input
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    placeholder="Type your reply..."
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSendMessage();
+                      }
+                    }}
+                    disabled={sending}
+                  />
+                  <Button
+                    onClick={handleSendMessage}
+                    disabled={!newMessage.trim() || sending}
+                    size="icon"
+                    className="shrink-0"
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       )}
