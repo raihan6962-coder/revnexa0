@@ -6,7 +6,7 @@ import { MessageCircle, X, Send, Clock, ArrowLeft, Paperclip, FileIcon } from 'l
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { createConversation, sendMessage, getMessages, uploadChatFile } from '@/lib/chat-db';
+import { createConversation, sendMessage, getMessages, uploadChatFile, conversationExists } from '@/lib/chat-db';
 import type { Message } from '@/lib/types';
 
 const CHAT_STORAGE_KEY = 'revnexa_active_chat';
@@ -71,6 +71,11 @@ export function ChatWidget() {
       if (!saved) return;
       const { conversationId: convId, client_name, client_email } = JSON.parse(saved);
       if (convId && client_name && client_email) {
+        const exists = await conversationExists(convId);
+        if (!exists) {
+          localStorage.removeItem(CHAT_STORAGE_KEY);
+          return;
+        }
         setConversationId(convId);
         setClientName(client_name);
         setClientEmail(client_email);

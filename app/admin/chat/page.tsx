@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { MessageCircle, Send, ArrowLeft, User, Paperclip, FileIcon } from 'lucide-react';
+import { MessageCircle, Send, ArrowLeft, User, Paperclip, FileIcon, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { getConversations, getMessages, sendMessage, uploadChatFile, closeConversation } from '@/lib/chat-db';
+import { getConversations, getMessages, sendMessage, uploadChatFile, closeConversation, deleteConversation } from '@/lib/chat-db';
 import type { Conversation, Message } from '@/lib/types';
 
 export default function AdminChatPage() {
@@ -111,6 +111,18 @@ export default function AdminChatPage() {
     } catch {}
   };
 
+  const handleDelete = async () => {
+    if (!selected) return;
+    if (!confirm('Delete this chat permanently? The user will also lose access to this chat.')) return;
+    try {
+      await deleteConversation(selected.id);
+      setConversations((prev) => prev.filter((c) => c.id !== selected.id));
+      if (pollRef.current) clearInterval(pollRef.current);
+      setSelected(null);
+      setMessages([]);
+    } catch {}
+  };
+
   const handleBack = () => {
     if (pollRef.current) clearInterval(pollRef.current);
     setSelected(null);
@@ -208,11 +220,16 @@ export default function AdminChatPage() {
                 <p className="text-xs text-muted-foreground">{selected.client_email}</p>
               </div>
             </div>
-            {selected.status === 'active' && (
-              <Button variant="outline" size="sm" onClick={handleClose}>
-                Close Chat
+            <div className="flex items-center gap-2">
+              {selected.status === 'active' && (
+                <Button variant="outline" size="sm" onClick={handleClose}>
+                  Close
+                </Button>
+              )}
+              <Button variant="destructive" size="sm" onClick={handleDelete} className="gap-1">
+                <Trash2 className="h-3.5 w-3.5" /> Delete
               </Button>
-            )}
+            </div>
           </div>
 
           <div className="flex flex-col h-[500px]">

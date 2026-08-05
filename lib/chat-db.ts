@@ -82,6 +82,27 @@ export async function closeConversation(id: string): Promise<void> {
     .eq('id', id);
 }
 
+export async function deleteConversation(id: string): Promise<void> {
+  await supabase
+    .from('chat_messages')
+    .delete()
+    .eq('conversation_id', id);
+
+  await supabase
+    .from('chat_conversations')
+    .delete()
+    .eq('id', id);
+}
+
+export async function conversationExists(id: string): Promise<boolean> {
+  const { data } = await supabase
+    .from('chat_conversations')
+    .select('id')
+    .eq('id', id)
+    .single();
+  return !!data;
+}
+
 export async function uploadChatFile(
   file: File,
   conversationId: string
