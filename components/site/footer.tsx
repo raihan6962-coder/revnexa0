@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Mail, MessageCircle, Send, Clock } from 'lucide-react';
-import { getSiteSettings } from '@/lib/data';
+import { getSiteSettings } from '@/lib/chat-db';
 import type { SiteSettings } from '@/lib/types';
 
 const footerLinks = [

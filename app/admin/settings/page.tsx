@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Save, Settings as SettingsIcon, Loader2, Send } from 'lucide-react';
-import { getSiteSettings, updateSiteSetting } from '@/lib/data';
+import { getSiteSettings, updateSiteSetting } from '@/lib/chat-db';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

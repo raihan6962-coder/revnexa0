@@ -1,7 +1,7 @@
 'use client';
 
 import { supabase } from './supabase';
-import type { Conversation, Message, MessageSender, Testimonial, Faq } from './types';
+import type { Conversation, Message, MessageSender, SiteSettings, Testimonial, Faq } from './types';
 
 export async function createConversation(data: {
   client_name: string;
@@ -226,4 +226,38 @@ export async function upsertFaq(faq: Partial<Faq> & { question: string; answer: 
 
 export async function deleteFaq(id: string): Promise<void> {
   await supabase.from('faqs').delete().eq('id', id);
+}
+
+// Site Settings
+export async function getSiteSettings(): Promise<SiteSettings> {
+  const { data, error } = await supabase
+    .from('site_settings')
+    .select('key, value');
+  if (error) throw error;
+  const settings: SiteSettings = {};
+  if (data) {
+    for (const row of data) {
+      settings[row.key] = row.value;
+    }
+  }
+  return settings;
+}
+
+export async function updateSiteSetting(key: string, value: string): Promise<void> {
+  const { data: existing } = await supabase
+    .from('site_settings')
+    .select('key')
+    .eq('key', key)
+    .single();
+
+  if (existing) {
+    await supabase
+      .from('site_settings')
+      .update({ value, updated_at: new Date().toISOString() })
+      .eq('key', key);
+  } else {
+    await supabase
+      .from('site_settings')
+      .insert({ key, value });
+  }
 }

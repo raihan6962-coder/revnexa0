@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { PageHero } from '@/components/site/page-hero';
 import { JsonLd, breadcrumbSchema } from '@/components/site/json-ld';
 import { ContactForm } from '@/components/site/contact-form';
-import { getSiteSettings } from '@/lib/data';
+import { getSiteSettings } from '@/lib/chat-db';
 import type { SiteSettings } from '@/lib/types';
 
 export default function ContactClient() {
