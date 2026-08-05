@@ -62,7 +62,7 @@ export default function ContactClient() {
                 <div className="mt-6 space-y-3">
                   {settings.whatsapp_number && (
                     <a
-                      href={`https://wa.me/${settings.whatsapp_number}`}
+                      href={`https://wa.me/${settings.whatsapp_number}?text=${encodeURIComponent('Hi Revnexa team! I found your website and I am interested in your Google Play Store review service. Could you share more details?')}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-4 rounded-xl border border-border bg-card p-4 shadow-premium transition-all hover:shadow-premium-lg hover:border-primary/30"
@@ -79,7 +79,7 @@ export default function ContactClient() {
                   )}
                   {settings.telegram_username && (
                     <a
-                      href={`https://t.me/${settings.telegram_username}`}
+                      href={`https://t.me/${settings.telegram_username}?text=${encodeURIComponent('Hi Revnexa team! I found your website and I am interested in your Google Play Store review service. Could you share more details?')}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-4 rounded-xl border border-border bg-card p-4 shadow-premium transition-all hover:shadow-premium-lg hover:border-primary/30"

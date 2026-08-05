@@ -37,6 +37,8 @@ export function Footer() {
   const telegram = settings.telegram_username;
   const email = settings.contact_email || 'hello@revnexa.com';
   const replyTime = settings.reply_time_text || 'We typically reply within 3-5 minutes';
+  const whatsappMsg = encodeURIComponent('Hi Revnexa team! I found your website and I am interested in your Google Play Store review service. Could you share more details?');
+  const telegramMsg = encodeURIComponent('Hi Revnexa team! I found your website and I am interested in your Google Play Store review service. Could you share more details?');
 
   return (
     <footer className="bg-navy-gradient text-secondary-foreground">
@@ -57,12 +59,12 @@ export function Footer() {
             </p>
             <div className="mt-6 flex items-center gap-3">
               {whatsapp && (
-                <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 text-secondary-foreground transition-colors hover:bg-primary hover:text-primary-foreground" aria-label="WhatsApp">
+                <a href={`https://wa.me/${whatsapp}?text=${whatsappMsg}`} target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 text-secondary-foreground transition-colors hover:bg-primary hover:text-primary-foreground" aria-label="WhatsApp">
                   <MessageCircle className="h-5 w-5" />
                 </a>
               )}
               {telegram && (
-                <a href={`https://t.me/${telegram}`} target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 text-secondary-foreground transition-colors hover:bg-primary hover:text-primary-foreground" aria-label="Telegram">
+                <a href={`https://t.me/${telegram}?text=${telegramMsg}`} target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 text-secondary-foreground transition-colors hover:bg-primary hover:text-primary-foreground" aria-label="Telegram">
                   <Send className="h-5 w-5" />
                 </a>
               )}
