@@ -2,22 +2,15 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
-import { MessageCircle, X, Send, Clock, ArrowLeft, Paperclip, Image, FileIcon } from 'lucide-react';
+import { MessageCircle, X, Send, Clock, ArrowLeft, Paperclip, FileIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { createConversation, sendMessage, getMessages, uploadChatFile } from '@/lib/chat-db';
+import { sendTelegramNotification } from '@/lib/data';
 import type { Message } from '@/lib/types';
 
-async function notifyTelegram(data: { full_name: string; email: string; app_name?: string | null; message: string; channel: string }) {
-  try {
-    await fetch('/api/notify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-  } catch {}
-}
+const CHAT_STORAGE_KEY = 'revnexa_active_chat';
 
 export function ChatWidget() {
   const pathname = usePathname();
@@ -35,6 +28,8 @@ export function ChatWidget() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [clientName, setClientName] = useState('');
+  const [clientEmail, setClientEmail] = useState('');
 
   const replyTime = 'We typically reply within 3-5 minutes';
 
@@ -61,6 +56,34 @@ export function ChatWidget() {
     pollRef.current = setInterval(() => fetchMessages(convId), 3000);
   }, [fetchMessages]);
 
+  const restoreChat = useCallback(async () => {
+    try {
+      const saved = localStorage.getItem(CHAT_STORAGE_KEY);
+      if (!saved) return;
+      const { conversationId: convId, client_name, client_email } = JSON.parse(saved);
+      if (convId && client_name && client_email) {
+        setConversationId(convId);
+        setClientName(client_name);
+        setClientEmail(client_email);
+        startPolling(convId);
+      }
+    } catch {
+      localStorage.removeItem(CHAT_STORAGE_KEY);
+    }
+  }, [startPolling]);
+
+  const saveChat = (convId: string, cname: string, cemail: string) => {
+    localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify({
+      conversationId: convId,
+      client_name: cname,
+      client_email: cemail,
+    }));
+  };
+
+  const clearSavedChat = () => {
+    localStorage.removeItem(CHAT_STORAGE_KEY);
+  };
+
   if (pathname?.startsWith('/admin')) return null;
 
   const handleStartChat = async () => {
@@ -83,7 +106,7 @@ export function ChatWidget() {
         content: initialMessage,
       });
 
-      notifyTelegram({
+      sendTelegramNotification({
         full_name: fullName.trim(),
         email: email.trim(),
         app_name: appName.trim() || null,
@@ -91,6 +114,7 @@ export function ChatWidget() {
         channel: 'chat',
       });
 
+      saveChat(convId, fullName.trim(), email.trim());
       setConversationId(convId);
       setMessages([]);
       startPolling(convId);
@@ -102,23 +126,26 @@ export function ChatWidget() {
     setSubmitting(false);
   };
 
+  const handleOpen = () => {
+    setOpen(true);
+    restoreChat();
+  };
+
   const handleSendMessage = async () => {
-    if ((!newMessage.trim() && !uploading) || !conversationId) return;
-    if (newMessage.trim() && !uploading) {
-      setSendingMessage(true);
-      const msgContent = newMessage;
-      setNewMessage('');
+    if (!newMessage.trim() || !conversationId) return;
+    setSendingMessage(true);
+    const msgContent = newMessage;
+    setNewMessage('');
 
-      try {
-        await sendMessage({
-          conversation_id: conversationId,
-          sender: 'client',
-          content: msgContent,
-        });
-      } catch {}
+    try {
+      await sendMessage({
+        conversation_id: conversationId,
+        sender: 'client',
+        content: msgContent,
+      });
+    } catch {}
 
-      setSendingMessage(false);
-    }
+    setSendingMessage(false);
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,9 +172,13 @@ export function ChatWidget() {
 
   const handleBackToForm = () => {
     if (pollRef.current) clearInterval(pollRef.current);
+    clearSavedChat();
     setConversationId(null);
     setMessages([]);
     setError('');
+    setFullName('');
+    setEmail('');
+    setAppName('');
   };
 
   const handleClose = () => {
@@ -191,7 +222,7 @@ export function ChatWidget() {
     <>
       {!open && (
         <button
-          onClick={() => setOpen(true)}
+          onClick={handleOpen}
           className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-premium-lg transition-transform hover:scale-105 active:scale-95"
           aria-label="Open chat"
         >
@@ -226,7 +257,7 @@ export function ChatWidget() {
               </button>
             </div>
 
-            {/* Form */}
+            {/* Form - only show if no active conversation */}
             {!conversationId ? (
               <div className="space-y-4 px-5 py-5">
                 <div className="rounded-lg bg-muted p-3 text-sm text-muted-foreground">
@@ -322,7 +353,7 @@ export function ChatWidget() {
                     />
                     <Button
                       onClick={handleSendMessage}
-                      disabled={(!newMessage.trim() && !uploading) || sendingMessage}
+                      disabled={!newMessage.trim() || sendingMessage}
                       size="icon"
                       className="shrink-0"
                     >

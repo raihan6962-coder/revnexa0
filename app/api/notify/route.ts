@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     const chatId = process.env.TELEGRAM_CHAT_ID;
 
     if (!botToken || !chatId) {
-      return NextResponse.json({ ok: false, reason: 'Telegram not configured' });
+      return NextResponse.json({ ok: false, reason: 'Telegram env vars not configured' });
     }
 
     const text = [
