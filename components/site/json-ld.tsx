@@ -232,7 +232,7 @@ export function reviewSchema(reviews: {
       '@type': 'Review',
       author: {
         '@type': 'Person',
-        name: review.author,
+        name: review.author || 'Revnexa Client',
       },
       datePublished: review.date,
       reviewBody: review.text,

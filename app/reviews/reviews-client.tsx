@@ -22,7 +22,7 @@ export default function ReviewsClient() {
   ).sort() as string[];
 
   const reviewData = testimonials.map((t) => ({
-    author: t.client_label,
+    author: t.client_label || 'Revnexa Client',
     rating: t.rating,
     text: t.review_text,
     date: t.created_at,
